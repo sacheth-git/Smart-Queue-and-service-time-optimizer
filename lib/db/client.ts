@@ -4,6 +4,7 @@ import Database from "better-sqlite3";
 import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import * as schema from "./schema";
+import { resetDemo } from "./seed";
 
 export type Db = BetterSQLite3Database<typeof schema>;
 
@@ -20,6 +21,10 @@ export function createDb(file: string): Db {
 const store = globalThis as unknown as { __pulsequeueDb?: Db };
 
 export function getDb(): Db {
-  store.__pulsequeueDb ??= createDb(path.join(process.cwd(), "data", "pulsequeue.db"));
+  if (!store.__pulsequeueDb) {
+    const db = createDb(path.join(process.cwd(), "data", "pulsequeue.db"));
+    if (db.select().from(schema.services).all().length === 0) resetDemo(db);
+    store.__pulsequeueDb = db;
+  }
   return store.__pulsequeueDb;
 }
