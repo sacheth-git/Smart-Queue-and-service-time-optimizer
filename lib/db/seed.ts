@@ -29,6 +29,14 @@ const SERVICES = [
 const HOURLY_SHARE = [0.06, 0.14, 0.17, 0.16, 0.13, 0.09, 0.09, 0.08, 0.05, 0.03];
 const HISTORY_COUNTERS: Record<string, number> = { general: 3, pediatrics: 2, lab: 2, pharmacy: 2 };
 
+/** Made-up staff for the demo. Never real people. */
+const STAFF: Record<string, string[]> = {
+  general: ["Dr. Meera Rao", "Dr. Arjun Nair", "Dr. Kavita Shah"],
+  pediatrics: ["Dr. Sanjay Iyer", "Dr. Neha Kulkarni"],
+  lab: ["Anita Desai (Technician)", "Vikram Joshi (Technician)", "Pooja Reddy (Technician)"],
+  pharmacy: ["Rohan Gupta (Pharmacist)", "Sneha Patil (Pharmacist)"],
+};
+
 const serviceMinutes = (rng: () => number, mean: number) =>
   Math.max(1.5, normal(rng, mean, 0.3 * mean));
 
@@ -43,6 +51,7 @@ export function seedServices(db: Db): void {
           id: `${s.id}-${i + 1}`,
           serviceId: s.id,
           label: `Counter ${i + 1}`,
+          staffName: STAFF[s.id][i] ?? null,
           isOpen: i < s.open ? 1 : 0,
         })),
       ),

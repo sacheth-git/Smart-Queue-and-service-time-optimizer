@@ -13,6 +13,7 @@ export const counters = sqliteTable("counters", {
   id: text("id").primaryKey(),
   serviceId: text("service_id").notNull().references(() => services.id),
   label: text("label").notNull(),
+  staffName: text("staff_name"),
   isOpen: integer("is_open").notNull().default(1),
 });
 

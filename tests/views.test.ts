@@ -127,7 +127,7 @@ test("displayView shows now serving and at most six up next", () => {
   for (let n = 1; n <= 9; n++) patient(db, n);
   callNext(db, "general-1", T0);
   const general = displayView(db).find((s) => s.serviceId === "general")!;
-  expect(general.nowServing).toEqual([{ code: "GEN-001", counterLabel: "Counter 1" }]);
+  expect(general.nowServing).toEqual([{ code: "GEN-001", counterLabel: "Counter 1", staffName: null }]);
   expect(general.upNext).toHaveLength(6);
   expect(general.upNext[0]).toBe("GEN-002");
 });

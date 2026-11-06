@@ -8,6 +8,13 @@
       "when": 1793945923623,
       "tag": "0000_next_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793954128267,
+      "tag": "0001_public_starfox",
+      "breakpoints": true
     }
   ]
 }

@@ -84,6 +84,10 @@ Seeded with four services: General OPD, Pediatrics, Lab, Pharmacy. Each has a to
 counters, and a default service time. Tokens are numbered per service and per day. A patient's visit to
 one service is independent of any other service.
 
+Each counter has a made-up staff name (for example "Dr. Meera Rao"), shown on the staff console, the
+waiting-room board and the patient's token page once they are called. Patients stay anonymous: a token
+code and the last 4 phone digits only, with no name, as the privacy constraint requires.
+
 ## Token lifecycle
 
 ```

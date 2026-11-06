@@ -43,12 +43,15 @@ export function DisplayBoard() {
                   <div
                     key={item.code}
                     className={cn(
-                      "flex items-center justify-between rounded-lg bg-slate-800 px-4 py-3",
+                      "flex flex-col gap-1 rounded-xl bg-slate-800 px-4 py-3",
                       fresh.has(item.code) && "animate-pulse bg-teal-800",
                     )}
                   >
-                    <span className="font-mono text-3xl font-bold">{item.code}</span>
-                    <span className="text-base text-slate-300">{item.counterLabel}</span>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="font-mono text-3xl font-bold whitespace-nowrap">{item.code}</span>
+                      <span className="text-base whitespace-nowrap text-slate-300">{item.counterLabel}</span>
+                    </div>
+                    {item.staffName && <span className="text-sm text-slate-400">{item.staffName}</span>}
                   </div>
                 ))}
               </div>

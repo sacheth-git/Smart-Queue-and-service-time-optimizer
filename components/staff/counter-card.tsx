@@ -20,7 +20,10 @@ export function CounterCard({ counter, act }: { counter: StaffCounter; act: Coun
   return (
     <div className={cn("flex flex-col gap-3 rounded-xl border border-slate-200 bg-white shadow-sm p-3", !counter.isOpen && "bg-muted/50")}>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{counter.label}</span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">{counter.label}</p>
+          {counter.staffName && <p className="truncate text-xs text-muted-foreground">{counter.staffName}</p>}
+        </div>
         <span
           className={cn(
             "rounded-full px-2 py-0.5 text-xs font-medium",

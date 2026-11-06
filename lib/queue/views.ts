@@ -50,6 +50,7 @@ export type PublicTokenView = {
   position: number | null;
   estimate: WaitEstimate | null;
   counterLabel: string | null;
+  staffName: string | null;
   isFinal: boolean;
 };
 
@@ -70,6 +71,7 @@ export function tokenView(db: Db, code: string, now: number): PublicTokenView | 
     position: waiting ? line.findIndex((t) => t.id === token.id) + 1 : null,
     estimate: waiting ? estimateForToken(db, token, now) : null,
     counterLabel: counter?.label ?? null,
+    staffName: counter?.staffName ?? null,
     isFinal: !(ACTIVE_STATUSES as readonly string[]).includes(token.status),
   };
 }
@@ -77,7 +79,7 @@ export function tokenView(db: Db, code: string, now: number): PublicTokenView | 
 export type DisplayService = {
   serviceId: string;
   serviceName: string;
-  nowServing: { code: string; counterLabel: string }[];
+  nowServing: { code: string; counterLabel: string; staffName: string | null }[];
   upNext: string[];
 };
 
@@ -89,20 +91,24 @@ export function displayView(db: Db): DisplayService[] {
     .all()
     .map((service) => {
       const ordered = orderedActive(db, service.id);
-      const labels = new Map(
+      const byId = new Map(
         db
           .select()
           .from(counters)
           .where(eq(counters.serviceId, service.id))
           .all()
-          .map((c) => [c.id, c.label]),
+          .map((c) => [c.id, c]),
       );
       return {
         serviceId: service.id,
         serviceName: service.name,
         nowServing: ordered
           .filter((t) => t.status !== "waiting")
-          .map((t) => ({ code: t.code, counterLabel: labels.get(t.counterId!) ?? "" })),
+          .map((t) => ({
+            code: t.code,
+            counterLabel: byId.get(t.counterId!)?.label ?? "",
+            staffName: byId.get(t.counterId!)?.staffName ?? null,
+          })),
         upNext: ordered
           .filter((t) => t.status === "waiting")
           .slice(0, 6)
@@ -126,6 +132,7 @@ export type StaffQueueRow = {
 export type StaffCounter = {
   id: string;
   label: string;
+  staffName: string | null;
   isOpen: boolean;
   token: StaffQueueRow | null;
 };
@@ -169,7 +176,13 @@ export function staffView(db: Db, now: number): StaffView {
       name: service.name,
       counters: list.map((c) => {
         const held = ordered.find((t) => t.counterId === c.id);
-        return { id: c.id, label: c.label, isOpen: c.isOpen === 1, token: held ? toRow(held, now) : null };
+        return {
+          id: c.id,
+          label: c.label,
+          staffName: c.staffName,
+          isOpen: c.isOpen === 1,
+          token: held ? toRow(held, now) : null,
+        };
       }),
       queue: waiting.map((t) => toRow(t, now)),
       estimate: estimateWait({

@@ -40,8 +40,22 @@ function Message({ title, body }: { title: string; body?: string }) {
 
 function WaitPanel({ view }: { view: PublicTokenView }) {
   if (view.isFinal) return <Message title={FINAL_COPY[view.status]} />;
-  if (view.status === "called") return <Message title={`Please go to ${view.counterLabel} now`} />;
-  if (view.status === "serving") return <Message title={`You are being seen at ${view.counterLabel}`} />;
+  if (view.status === "called") {
+    return (
+      <Message
+        title={`Please go to ${view.counterLabel} now`}
+        body={view.staffName ? `${view.staffName} is ready for you` : undefined}
+      />
+    );
+  }
+  if (view.status === "serving") {
+    return (
+      <Message
+        title={`You are being seen at ${view.counterLabel}`}
+        body={view.staffName ? `With ${view.staffName}` : undefined}
+      />
+    );
+  }
   const estimate = view.estimate;
   return (
     <div className="flex flex-col items-center gap-3 text-center">
