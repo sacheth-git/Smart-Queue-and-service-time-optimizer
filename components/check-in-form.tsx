@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { newIdempotencyKey } from "@/lib/queue/idempotency-key";
 import { cn } from "@/lib/utils";
 import { TokenQrDialog } from "./token-qr-dialog";
 import { postJson } from "./use-poll";
@@ -48,7 +49,7 @@ export function CheckInForm({
       setError("Enter a 10-digit phone number.");
       return;
     }
-    attempt.current ??= crypto.randomUUID();
+    attempt.current ??= newIdempotencyKey();
     setBusy(true);
     setError(null);
     const response = await postJson("/api/check-in", {
