@@ -14,4 +14,8 @@ export const tokenActionSchema = z.object({
 });
 export const triageSchema = z.object({ decision: priority, overrideReason: z.string().optional() });
 export const counterActionSchema = z.object({ action: z.enum(["open", "close", "call_next"]) });
+export const addCounterSchema = z.object({
+  serviceId: z.string().min(1),
+  staffName: z.string().trim().min(1).max(60),
+});
 export const advanceSchema = z.object({ minutes: z.number() });

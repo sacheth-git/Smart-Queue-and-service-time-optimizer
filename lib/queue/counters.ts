@@ -1,6 +1,6 @@
 import { and, eq, inArray } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
-import { counters, tokens, type Counter, type Token } from "@/lib/db/schema";
+import { counters, services, tokens, type Counter, type Token } from "@/lib/db/schema";
 import { DomainError } from "@/lib/errors";
 import { sortQueue } from "./order";
 import { transition } from "./transitions";
@@ -23,6 +23,26 @@ function assertFree(db: Db, counterId: string): void {
   if (counterToken(db, counterId)) {
     throw new DomainError("counter_busy", "Finish the current patient first.");
   }
+}
+
+/** Sets up a new open counter for a service, numbered after the ones it already has. */
+export function addCounter(db: Db, input: { serviceId: string; staffName: string }): Counter {
+  return db.transaction(() => {
+    const service = db.select().from(services).where(eq(services.id, input.serviceId)).get();
+    if (!service) throw new DomainError("service_not_found", "That service does not exist.", 404);
+    const number = db.select().from(counters).where(eq(counters.serviceId, service.id)).all().length + 1;
+    return db
+      .insert(counters)
+      .values({
+        id: `${service.id}-${number}`,
+        serviceId: service.id,
+        label: `Counter ${number}`,
+        staffName: input.staffName,
+        isOpen: 1,
+      })
+      .returning()
+      .get();
+  });
 }
 
 export function openCounter(db: Db, counterId: string): void {

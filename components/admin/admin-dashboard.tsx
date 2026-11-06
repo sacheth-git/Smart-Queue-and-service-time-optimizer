@@ -9,6 +9,7 @@ import type { kpis } from "@/lib/analytics/kpis";
 import type { HeatCell } from "@/lib/analytics/peaks";
 import type { Recommendation } from "@/lib/analytics/recommendations";
 import type { auditLog, serviceAnalytics } from "@/lib/analytics/service-stats";
+import { AddCounter } from "./add-counter";
 import { AuditLog } from "./audit-log";
 import { BottleneckAlerts, RecommendationCards } from "./bottleneck-alerts";
 import { EstimatePanel } from "./estimate-panel";
@@ -66,6 +67,7 @@ export function AdminDashboard() {
             <BottleneckAlerts items={live.data.bottlenecks} />
             <RecommendationCards items={live.data.recommendations} />
           </div>
+          <AddCounter services={live.data.services} onAdded={refreshAll} />
           {analytics.data ? (
             <PeakHeatmap cells={analytics.data.heatmap} />
           ) : (
