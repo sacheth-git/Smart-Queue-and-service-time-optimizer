@@ -69,3 +69,4 @@ There is no LLM, so it runs offline and every result can be explained.
 - This is a demo. There is no login, and the role switcher is open to anyone.
 - All data is synthetic, and the numbers describe that data, not a real hospital.
 - The triage rules are illustrative and not clinically validated.
+# Smart-Queue-and-service-time-optimizer
