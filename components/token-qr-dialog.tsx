@@ -12,13 +12,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { isLocalOnlyHost, trackUrl } from "@/lib/queue/track-link";
+import { isLocalOnlyHost, qrOrigin, trackUrl } from "@/lib/queue/track-link";
 
-type Props = { code: string; open: boolean; onOpenChange: (open: boolean) => void };
+type Props = {
+  code: string;
+  networkAddress: string | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
 
 /** Only rendered after check-in, so it always runs in the browser. */
-export function TokenQrDialog({ code, open, onOpenChange }: Props) {
-  const { origin, hostname } = window.location;
+export function TokenQrDialog({ code, networkAddress, open, onOpenChange }: Props) {
+  const origin = qrOrigin(window.location, networkAddress);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,14 +44,11 @@ export function TokenQrDialog({ code, open, onOpenChange }: Props) {
             className="h-auto w-full"
           />
         </div>
-        {isLocalOnlyHost(hostname) && (
+        {isLocalOnlyHost(new URL(origin).hostname) && (
           <Alert variant="destructive" className="text-left">
             <TriangleAlert />
             <AlertTitle>This code will not open on a phone yet.</AlertTitle>
-            <AlertDescription>
-              This page is open on localhost. Open it using this computer&apos;s network address instead, such as
-              http://192.168.1.10:3000/check-in, then check in again.
-            </AlertDescription>
+            <AlertDescription>Connect this computer to Wi-Fi or a hotspot, then check in again.</AlertDescription>
           </Alert>
         )}
         <DialogClose render={<Button variant="outline" size="lg" className="w-full" />}>Done</DialogClose>

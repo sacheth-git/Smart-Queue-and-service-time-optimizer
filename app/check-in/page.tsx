@@ -1,7 +1,9 @@
+import { networkInterfaces } from "node:os";
 import { AppShell } from "@/components/app-shell";
 import { CheckInForm } from "@/components/check-in-form";
 import { getDb } from "@/lib/db/client";
 import { services } from "@/lib/db/schema";
+import { pickNetworkAddress } from "@/lib/network-address";
 import { ITEMS } from "@/lib/triage/rules";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +16,11 @@ export default function CheckInPage() {
         <h1 className="text-3xl font-bold tracking-tight">Get your token</h1>
         <p className="text-muted-foreground">Join the queue in under a minute.</p>
       </div>
-      <CheckInForm services={list} items={ITEMS.map(({ code, label }) => ({ code, label }))} />
+      <CheckInForm
+        services={list}
+        items={ITEMS.map(({ code, label }) => ({ code, label }))}
+        networkAddress={pickNetworkAddress(networkInterfaces())}
+      />
     </AppShell>
   );
 }

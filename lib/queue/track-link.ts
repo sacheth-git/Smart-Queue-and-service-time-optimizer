@@ -16,3 +16,11 @@ export function tokenPathFromParam(token: string | string[] | undefined): string
 export function isLocalOnlyHost(hostname: string): boolean {
   return LOCAL_ONLY_HOSTS.has(hostname);
 }
+
+type PageLocation = Pick<Location, "origin" | "hostname" | "protocol" | "port">;
+
+/** The origin to put in a QR code. A page on localhost borrows this computer's network address. */
+export function qrOrigin(page: PageLocation, networkAddress: string | null): string {
+  if (!networkAddress || !isLocalOnlyHost(page.hostname)) return page.origin;
+  return `${page.protocol}//${networkAddress}${page.port ? `:${page.port}` : ""}`;
+}

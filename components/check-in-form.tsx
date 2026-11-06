@@ -29,9 +29,11 @@ const RESULT_COPY: Record<Outcome, { title: string; body?: string }> = {
 export function CheckInForm({
   services,
   items,
+  networkAddress,
 }: {
   services: { id: string; name: string }[];
   items: { code: string; label: string }[];
+  networkAddress: string | null;
 }) {
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
   const [phone, setPhone] = useState("");
@@ -95,7 +97,7 @@ export function CheckInForm({
             <Plus /> Check in another patient
           </Button>
         </CardContent>
-        <TokenQrDialog code={result.code} open={showQr} onOpenChange={setShowQr} />
+        <TokenQrDialog code={result.code} networkAddress={networkAddress} open={showQr} onOpenChange={setShowQr} />
       </Card>
     );
   }
