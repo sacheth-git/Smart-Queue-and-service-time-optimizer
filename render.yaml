@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: pulsequeue-ai
+    runtime: node
+    plan: free
+    region: singapore
+    # better-sqlite3 ships ready-made builds, so its source does not need compiling.
+    buildCommand: npm ci --include=dev --ignore-scripts && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/display
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      # The demo morning is set in server time, so match the audience.
+      - key: TZ
+        value: Asia/Kolkata
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
