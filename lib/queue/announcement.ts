@@ -5,7 +5,7 @@ type Phrases = { token: string; go: string; counter: string; digits: string[]; s
 
 export const LANGUAGE_NAMES: Record<Language, string> = { en: "English", kn: "ಕನ್ನಡ", hi: "हिन्दी" };
 
-const LANGUAGES: Language[] = ["en", "kn", "hi"];
+export const LANGUAGES: Language[] = ["en", "kn", "hi"];
 
 const PHRASES: Record<Exclude<Language, "en">, Phrases> = {
   hi: {
@@ -95,6 +95,29 @@ export function pickVoice<T extends VoiceInfo>(
 /** English always stays, since the browser can fall back to its default voice for it. */
 export function usableLanguages(voices: readonly VoiceInfo[], online: boolean): Language[] {
   return LANGUAGES.filter((language) => language === "en" || pickVoice(voices, language, online));
+}
+
+/** The selected languages that can be spoken now. English steps in so that a call is never silent. */
+export function chosenLanguages(selected: Language[], usable: Language[]): Language[] {
+  const chosen = usable.filter((language) => selected.includes(language));
+  return chosen.length > 0 ? chosen : ["en"];
+}
+
+/** Adds or removes a language, always keeping at least one selected. */
+export function toggleLanguage(selected: Language[], language: Language): Language[] {
+  if (!selected.includes(language)) return LANGUAGES.filter((l) => l === language || selected.includes(l));
+  return selected.length > 1 ? selected.filter((l) => l !== language) : selected;
+}
+
+/** Reads a saved selection, using every language if it is missing or damaged. */
+export function parseLanguages(saved: string | null): Language[] {
+  try {
+    const parsed: unknown = JSON.parse(saved ?? "[]");
+    const languages = Array.isArray(parsed) ? LANGUAGES.filter((l) => parsed.includes(l)) : [];
+    return languages.length > 0 ? languages : LANGUAGES;
+  } catch {
+    return LANGUAGES;
+  }
 }
 
 /** Each language is said once. A lone language is said twice, so that a missed call can be caught. */

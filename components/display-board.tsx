@@ -3,7 +3,7 @@
 import { Activity, ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { LANGUAGE_NAMES } from "@/lib/queue/announcement";
+import { chosenLanguages, LANGUAGE_NAMES, LANGUAGES } from "@/lib/queue/announcement";
 import type { DisplayService } from "@/lib/queue/views";
 import { cn } from "@/lib/utils";
 import { useAnnouncements } from "./announcer-provider";
@@ -14,7 +14,7 @@ export function DisplayBoard() {
   const { data } = usePoll<{ services: DisplayService[] }>("/api/display");
   const [known, setKnown] = useState<string[] | null>(null);
   const [freshCodes, setFreshCodes] = useState<string[]>([]);
-  const { status, languages, toggle } = useAnnouncements();
+  const { status, usable, selected, chooseLanguage, toggle } = useAnnouncements();
 
   const current = data?.services.flatMap((s) => s.nowServing.map((n) => n.code)) ?? [];
   if (data && current.join() !== known?.join()) {
@@ -31,9 +31,31 @@ export function DisplayBoard() {
         </div>
         <div className="flex items-center gap-4">
           {status === "on" && (
-            <span className="text-sm text-slate-300">
-              {languages.map((language) => LANGUAGE_NAMES[language]).join(" · ")}
-            </span>
+            <div role="group" aria-label="Announcement languages" className="flex items-center gap-2">
+              {LANGUAGES.map((language) => {
+                const canSpeak = usable.includes(language);
+                const chosen = chosenLanguages(selected, usable).includes(language);
+                return (
+                  <button
+                    key={language}
+                    type="button"
+                    aria-pressed={chosen}
+                    disabled={!canSpeak}
+                    title={canSpeak ? undefined : "Needs internet and the Edge browser"}
+                    onClick={() => chooseLanguage(language)}
+                    className={cn(
+                      "rounded-lg border px-3 py-2 text-base font-medium transition-colors",
+                      chosen
+                        ? "border-teal-400 bg-teal-600 text-white"
+                        : "border-slate-700 text-slate-300 hover:bg-slate-800",
+                      !canSpeak && "cursor-not-allowed opacity-40 hover:bg-transparent",
+                    )}
+                  >
+                    {LANGUAGE_NAMES[language]}
+                  </button>
+                );
+              })}
+            </div>
           )}
           <button
             type="button"

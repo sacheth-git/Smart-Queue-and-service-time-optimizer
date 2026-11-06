@@ -2,10 +2,13 @@ import { expect, test } from "vitest";
 import {
   announcementText,
   callsOnBoard,
+  chosenLanguages,
   findNewCalls,
+  parseLanguages,
   pickVoice,
   speakingOrder,
   spellCode,
+  toggleLanguage,
   usableLanguages,
 } from "@/lib/queue/announcement";
 
@@ -119,4 +122,46 @@ test("several languages are each spoken once", () => {
 
 test("English alone is spoken twice", () => {
   expect(speakingOrder(["en"])).toEqual(["en", "en"]);
+});
+
+test("Kannada alone is spoken twice, with no English", () => {
+  expect(speakingOrder(chosenLanguages(["kn"], ["en", "kn", "hi"]))).toEqual(["kn", "kn"]);
+});
+
+test("only the selected languages are spoken", () => {
+  expect(chosenLanguages(["en", "hi"], ["en", "kn", "hi"])).toEqual(["en", "hi"]);
+});
+
+test("a selected language with no voice right now is left out", () => {
+  expect(chosenLanguages(["en", "kn"], ["en"])).toEqual(["en"]);
+});
+
+test("a call is never silent: English steps in when no selected language can be spoken", () => {
+  expect(chosenLanguages(["kn", "hi"], ["en"])).toEqual(["en"]);
+});
+
+test("a language can be added and keeps the fixed order", () => {
+  expect(toggleLanguage(["hi"], "en")).toEqual(["en", "hi"]);
+});
+
+test("a language can be removed", () => {
+  expect(toggleLanguage(["en", "hi"], "en")).toEqual(["hi"]);
+});
+
+test("the last selected language cannot be removed", () => {
+  expect(toggleLanguage(["kn"], "kn")).toEqual(["kn"]);
+});
+
+test("a saved selection is restored", () => {
+  expect(parseLanguages('["kn","hi"]')).toEqual(["kn", "hi"]);
+});
+
+test.each([
+  ["nothing saved", null],
+  ["broken data", "{oops"],
+  ["not a list", '"kn"'],
+  ["unknown languages only", '["fr"]'],
+  ["an empty list", "[]"],
+])("%s falls back to every language", (_name, saved) => {
+  expect(parseLanguages(saved)).toEqual(["en", "kn", "hi"]);
 });

@@ -3,8 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   announcementText,
+  chosenLanguages,
+  parseLanguages,
   pickVoice,
   speakingOrder,
+  toggleLanguage,
   usableLanguages,
   type Language,
   type TokenCall,
@@ -26,7 +29,26 @@ const SPEECH_START_MS = 5_000;
 /** Browsers sometimes never report the end of speech, which would freeze every later announcement. */
 const LONGEST_SPEECH_MS = 20_000;
 
+const LANGUAGE_KEY = "pulsequeue.announcement-languages";
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** The selection is a convenience, so private windows and blocked storage simply use the default. */
+function loadSelection(): Language[] {
+  try {
+    return parseLanguages(window.localStorage.getItem(LANGUAGE_KEY));
+  } catch {
+    return parseLanguages(null);
+  }
+}
+
+function saveSelection(languages: Language[]) {
+  try {
+    window.localStorage.setItem(LANGUAGE_KEY, JSON.stringify(languages));
+  } catch {
+    // Nothing to do: the selection still applies until the page is refreshed.
+  }
+}
 
 function say(text: string, language: Language): Promise<void> {
   return new Promise((resolve) => {
@@ -70,7 +92,11 @@ function playChime(audio: AudioContext) {
 /** Browsers only allow sound after a click, so announcements start from the toggle button. */
 export function useAnnouncer() {
   const [status, setStatus] = useState<AnnouncerStatus>("off");
-  const [languages, setLanguages] = useState<Language[]>(["en"]);
+  const [usable, setUsable] = useState<Language[]>(["en"]);
+  const [selected, setSelected] = useState<Language[]>(() =>
+    typeof window === "undefined" ? parseLanguages(null) : loadSelection(),
+  );
+  const selection = useRef(selected);
   const enabled = useRef(false);
   const audio = useRef<AudioContext | null>(null);
   const queue = useRef<TokenCall[]>([]);
@@ -82,10 +108,10 @@ export function useAnnouncer() {
     while (enabled.current && queue.current.length > 0) {
       const call = queue.current.shift()!;
       const available = usableLanguages(speechSynthesis.getVoices(), navigator.onLine);
-      setLanguages(available);
+      setUsable(available);
       if (audio.current) playChime(audio.current);
       await wait(CHIME_MS);
-      for (const language of speakingOrder(available)) {
+      for (const language of speakingOrder(chosenLanguages(selection.current, available))) {
         if (!enabled.current) break;
         await say(announcementText(call, language), language);
         await wait(PAUSE_MS);
@@ -117,10 +143,30 @@ export function useAnnouncer() {
     audio.current ??= new AudioContext();
     void audio.current.resume();
     setStatus("on");
-    setLanguages(usableLanguages(speechSynthesis.getVoices(), navigator.onLine));
+    setUsable(usableLanguages(speechSynthesis.getVoices(), navigator.onLine));
     playChime(audio.current);
     void say("Announcements are on.", "en");
   }
+
+  function chooseLanguage(language: Language) {
+    const next = toggleLanguage(selection.current, language);
+    selection.current = next;
+    setSelected(next);
+    saveSelection(next);
+  }
+
+  useEffect(() => {
+    if (!("speechSynthesis" in window)) return;
+    const refresh = () => setUsable(usableLanguages(speechSynthesis.getVoices(), navigator.onLine));
+    speechSynthesis.addEventListener("voiceschanged", refresh);
+    window.addEventListener("online", refresh);
+    window.addEventListener("offline", refresh);
+    return () => {
+      speechSynthesis.removeEventListener("voiceschanged", refresh);
+      window.removeEventListener("online", refresh);
+      window.removeEventListener("offline", refresh);
+    };
+  }, []);
 
   useEffect(
     () => () => {
@@ -132,5 +178,5 @@ export function useAnnouncer() {
     [],
   );
 
-  return { status, languages, toggle, announce };
+  return { status, usable, selected, chooseLanguage, toggle, announce };
 }
