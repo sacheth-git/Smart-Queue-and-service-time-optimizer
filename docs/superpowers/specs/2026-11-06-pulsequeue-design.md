@@ -71,6 +71,8 @@ can sit side by side on the laptop.
    times can change because urgent cases may be seen first, and a cancel button.
 3. **Waiting-room display (`/display`).** Large-format board: now serving per counter and upcoming token
    codes. Token codes only, never urgency.
+   An optional toggle reads each new call aloud using a voice installed on the laptop: token, service
+   and counter only.
 4. **Staff console (`/staff`).** Live queue per service, counter controls (open or close a counter, call
    next, start, complete, no-show), and a triage review panel.
 5. **Admin dashboard (`/admin`).** Live KPIs, peak-hour heatmap, bottleneck alerts, service analytics,

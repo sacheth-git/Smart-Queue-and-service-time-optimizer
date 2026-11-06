@@ -1,23 +1,38 @@
 "use client";
 
-import { Activity, ArrowLeft } from "lucide-react";
+import { Activity, ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { findNewCalls, type TokenCall } from "@/lib/queue/announcement";
 import type { DisplayService } from "@/lib/queue/views";
 import { cn } from "@/lib/utils";
+import { type AnnouncerStatus, useAnnouncer } from "./use-announcer";
 import { usePoll } from "./use-poll";
+
+const ANNOUNCER_LABEL: Record<AnnouncerStatus, string> = {
+  off: "Turn on announcements",
+  on: "Announcements on",
+  unavailable: "Announcements are not available in this browser",
+};
 
 export function DisplayBoard() {
   const { data } = usePoll<{ services: DisplayService[] }>("/api/display");
   const [known, setKnown] = useState<string[] | null>(null);
-  const [freshCodes, setFreshCodes] = useState<string[]>([]);
+  const [freshCalls, setFreshCalls] = useState<TokenCall[]>([]);
+  const { status, toggle, announce } = useAnnouncer();
 
-  const current = data?.services.flatMap((s) => s.nowServing.map((n) => n.code)) ?? [];
-  if (data && current.join() !== known?.join()) {
-    setFreshCodes(known ? current.filter((code) => !known.includes(code)) : []);
-    setKnown(current);
+  const current =
+    data?.services.flatMap((s) =>
+      s.nowServing.map(({ code, counterLabel }) => ({ code, counterLabel, serviceName: s.serviceName })),
+    ) ?? [];
+  const currentCodes = current.map((call) => call.code);
+  if (data && currentCodes.join() !== known?.join()) {
+    setFreshCalls(findNewCalls(known, current));
+    setKnown(currentCodes);
   }
-  const fresh = new Set(freshCodes);
+  const fresh = new Set(freshCalls.map((call) => call.code));
+
+  useEffect(() => announce(freshCalls), [freshCalls, announce]);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 p-6 text-slate-100">
@@ -25,9 +40,25 @@ export function DisplayBoard() {
         <div className="flex items-center gap-3 text-2xl font-semibold">
           <Activity className="size-7 text-teal-400" /> Now serving
         </div>
-        <Link href="/staff" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300">
-          <ArrowLeft className="size-4" /> Back
-        </Link>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            aria-pressed={status === "on"}
+            onClick={toggle}
+            className={cn(
+              "flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+              status === "on"
+                ? "border-teal-400 bg-teal-900 text-teal-100"
+                : "border-slate-700 text-slate-300 hover:bg-slate-800",
+            )}
+          >
+            {status === "on" ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+            {ANNOUNCER_LABEL[status]}
+          </button>
+          <Link href="/staff" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300">
+            <ArrowLeft className="size-4" /> Back
+          </Link>
+        </div>
       </header>
 
       {!data ? (
