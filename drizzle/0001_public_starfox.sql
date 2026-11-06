@@ -1,0 +1,1 @@
+ALTER TABLE `counters` ADD `staff_name` text;
