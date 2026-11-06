@@ -21,7 +21,7 @@ The demo clock keeps running, so press **Reset demo** just before presenting.
 
 Other commands: `npm test`, `npm run typecheck`, `npm run lint`.
 
-## Demo script (about 3 minutes)
+## Demo script
 
 Put **Staff** and **Admin** side by side, with a patient token page in a third window.
 
