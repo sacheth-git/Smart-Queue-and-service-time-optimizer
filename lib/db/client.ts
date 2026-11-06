@@ -18,13 +18,16 @@ export function createDb(file: string): Db {
   return db;
 }
 
+/** The app is demo-only, so each start restores the 11:00 morning rather than a stale clock. */
+export function openDemoDb(file: string, realNow = Date.now()): Db {
+  const db = createDb(file);
+  resetDemo(db, realNow);
+  return db;
+}
+
 const store = globalThis as unknown as { __pulsequeueDb?: Db };
 
 export function getDb(): Db {
-  if (!store.__pulsequeueDb) {
-    const db = createDb(path.join(process.cwd(), "data", "pulsequeue.db"));
-    if (db.select().from(schema.services).all().length === 0) resetDemo(db);
-    store.__pulsequeueDb = db;
-  }
+  store.__pulsequeueDb ??= openDemoDb(path.join(process.cwd(), "data", "pulsequeue.db"));
   return store.__pulsequeueDb;
 }
