@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, DoorClosed, DoorOpen, Megaphone, Play, Undo2, UserX, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +18,7 @@ export function CounterCard({ counter, act }: { counter: StaffCounter; act: Coun
   const token = counter.token;
 
   return (
-    <div className={cn("flex flex-col gap-3 rounded-lg border bg-card p-3", !counter.isOpen && "bg-muted/50")}>
+    <div className={cn("flex flex-col gap-3 rounded-xl border border-slate-200 bg-white shadow-sm p-3", !counter.isOpen && "bg-muted/50")}>
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">{counter.label}</span>
         <span
@@ -44,32 +45,32 @@ export function CounterCard({ counter, act }: { counter: StaffCounter; act: Coun
       <div className="mt-auto flex flex-wrap gap-2">
         {!counter.isOpen && (
           <Button size="sm" variant="outline" onClick={() => act.counter(counter.id, "open")}>
-            Open counter
+            <DoorOpen /> Open counter
           </Button>
         )}
         {counter.isOpen && !token && (
           <>
             <Button size="sm" onClick={() => act.counter(counter.id, "call_next")}>
-              Call next
+              <Megaphone /> Call next
             </Button>
             <Button size="sm" variant="ghost" onClick={() => act.counter(counter.id, "close")}>
-              Close
+              <DoorClosed /> Close
             </Button>
           </>
         )}
         {token?.status === "called" && (
           <>
             <Button size="sm" onClick={() => act.token(token.id, "start")}>
-              Start
+              <Play /> Start
             </Button>
             <Button size="sm" variant="outline" onClick={() => act.token(token.id, "no_show")}>
-              No-show
+              <UserX /> No-show
             </Button>
             <Button size="sm" variant="outline" onClick={() => act.token(token.id, "recall")}>
-              Recall
+              <Undo2 /> Recall
             </Button>
             <Button size="sm" variant="ghost" onClick={() => act.token(token.id, "cancel")}>
-              Cancel
+              <X /> Cancel
             </Button>
           </>
         )}
@@ -82,7 +83,7 @@ export function CounterCard({ counter, act }: { counter: StaffCounter; act: Coun
                 setEndedEarly(false);
               }}
             >
-              Complete
+              <Check /> Complete
             </Button>
             <Label className="flex items-center gap-1.5 text-xs font-normal">
               <Checkbox checked={endedEarly} onCheckedChange={(on) => setEndedEarly(on === true)} />

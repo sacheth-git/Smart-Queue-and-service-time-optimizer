@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
+import "@fontsource/ibm-plex-mono/latin-500.css";
+import "@fontsource/ibm-plex-mono/latin-700.css";
+import "@fontsource/ibm-plex-sans/latin-400.css";
+import "@fontsource/ibm-plex-sans/latin-500.css";
+import "@fontsource/ibm-plex-sans/latin-600.css";
+import "@fontsource/ibm-plex-sans/latin-700.css";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -11,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} h-full antialiased`}>
+    <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
         {children}
         <Toaster position="bottom-right" richColors />

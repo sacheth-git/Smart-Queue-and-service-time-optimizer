@@ -1,4 +1,4 @@
-import { ShieldCheck, Siren } from "lucide-react";
+import { Check, Pencil, ShieldCheck, Siren } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { StaffQueueRow } from "@/lib/queue/views";
@@ -36,7 +36,7 @@ export function TriagePanel({
           return (
             <div
               key={row.id}
-              className={cn("flex flex-col gap-2 rounded-lg border p-3", urgent && "border-red-300 bg-red-50")}
+              className={cn("flex flex-col gap-2 rounded-xl border border-slate-200 bg-white shadow-sm p-3", urgent && "border-red-200 bg-red-50")}
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="flex items-center gap-2 font-mono text-lg font-bold">
@@ -49,10 +49,10 @@ export function TriagePanel({
               <p className="text-sm">{row.reasons.join(", ")}</p>
               <div className="flex gap-2">
                 <Button size="sm" className="flex-1" onClick={() => onConfirm(row, level)}>
-                  Confirm {priorityLabel(level)}
+                  <Check /> Confirm {priorityLabel(level)}
                 </Button>
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => onChange(row)}>
-                  Change level
+                  <Pencil /> Change level
                 </Button>
               </div>
             </div>

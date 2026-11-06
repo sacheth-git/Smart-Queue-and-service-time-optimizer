@@ -62,7 +62,7 @@ export default function HomePage() {
   return (
     <AppShell>
       <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 py-10 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl">
           Shorter queues. Clearer waits. Staff stay in charge.
         </h1>
         <p className="max-w-2xl text-lg text-muted-foreground">

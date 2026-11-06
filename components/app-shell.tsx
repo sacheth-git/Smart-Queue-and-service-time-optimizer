@@ -16,8 +16,8 @@ const NAV = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <header className="sticky top-0 z-30 border-b bg-card/95 backdrop-blur">
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
             <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">

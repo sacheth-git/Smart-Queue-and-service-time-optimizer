@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft, Check } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +25,7 @@ function Choice({ on, label, onClick }: { on: boolean; label: string; onClick: (
       aria-pressed={on}
       onClick={onClick}
       className={cn(
-        "rounded-md border px-3 py-2 text-sm transition-colors hover:bg-muted",
+        "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition-colors hover:bg-muted",
         on && "border-primary bg-accent font-medium text-accent-foreground",
       )}
     >
@@ -78,13 +79,13 @@ export function PriorityDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Back
+            <ArrowLeft /> Back
           </Button>
           <Button
             disabled={needsReason && !reason}
             onClick={() => onSave(level, needsReason ? (reason ?? undefined) : undefined)}
           >
-            Save decision
+            <Check /> Save decision
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -31,7 +31,7 @@ export function DemoControls({ onChange }: { onChange?: () => void }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed bg-muted/40 px-3 py-2">
+    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white px-3 py-2 shadow-sm">
       <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Demo controls</span>
       <Button
         size="sm"
@@ -66,7 +66,7 @@ export function DemoControls({ onChange }: { onChange?: () => void }) {
           <DialogFooter>
             <DialogClose render={<Button variant="outline" />}>Keep going</DialogClose>
             <Button disabled={busy} onClick={() => run("/api/demo/reset", "Demo reset")}>
-              Reset demo
+              <RotateCcw /> Reset demo
             </Button>
           </DialogFooter>
         </DialogContent>

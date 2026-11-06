@@ -40,7 +40,7 @@ export function AdminDashboard() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Operations dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Operations dashboard</h1>
           <p className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="size-4" />
             {live.data

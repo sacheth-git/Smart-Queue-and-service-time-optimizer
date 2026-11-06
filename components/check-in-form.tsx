@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, CircleCheck, Siren, TriangleAlert } from "lucide-react";
+import { ArrowRight, CircleCheck, Plus, Siren, Ticket, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -82,7 +82,7 @@ export function CheckInForm({
             Track this token <ArrowRight />
           </Button>
           <Button variant="ghost" onClick={startOver}>
-            Check in another patient
+            <Plus /> Check in another patient
           </Button>
         </CardContent>
       </Card>
@@ -111,7 +111,7 @@ export function CheckInForm({
                 attempt.current = null;
               }}
               className={cn(
-                "rounded-lg border px-3 py-4 text-sm font-medium transition-colors hover:bg-muted",
+                "rounded-xl border border-slate-200 bg-white px-3 py-4 text-sm font-medium shadow-sm transition-colors hover:bg-muted",
                 serviceId === service.id && "border-primary bg-accent text-accent-foreground",
               )}
             >
@@ -154,7 +154,7 @@ export function CheckInForm({
         </CardHeader>
         <CardContent className="grid gap-2 sm:grid-cols-2">
           {items.map((item) => (
-            <Label key={item.code} className="flex items-center gap-2 rounded-md border px-3 py-2 font-normal">
+            <Label key={item.code} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 font-normal">
               <Checkbox
                 checked={picked.includes(item.code)}
                 onCheckedChange={(on) => {
@@ -176,7 +176,7 @@ export function CheckInForm({
       )}
 
       <Button type="submit" size="lg" disabled={busy}>
-        {busy ? "Getting your token..." : "Get my token"}
+        <Ticket /> {busy ? "Getting your token..." : "Get my token"}
       </Button>
     </form>
   );

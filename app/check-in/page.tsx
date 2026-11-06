@@ -11,7 +11,7 @@ export default function CheckInPage() {
   return (
     <AppShell>
       <div className="mb-5 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Get your token</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Get your token</h1>
         <p className="text-muted-foreground">Join the queue in under a minute.</p>
       </div>
       <CheckInForm services={list} items={ITEMS.map(({ code, label }) => ({ code, label }))} />

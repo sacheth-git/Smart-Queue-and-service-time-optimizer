@@ -127,6 +127,9 @@ output is a level plus the rule that fired, worded as "Suggested for staff revie
 Urgent rule level raises a highlighted alert in the staff console. The sample rules are illustrative
 for the demo and are not clinically validated, and the UI says so.
 
+**On-screen names.** The levels `urgent`, `priority` and `routine` appear to staff as Critical, Urgent
+and Routine.
+
 **Human decision.** A staff member opens the suggestion and confirms it or picks a different level.
 Overriding requires a reason from a short fixed list. Staff can also raise any token without a
 suggestion. Only this action changes `confirmed_priority`. The audit log records the token, suggestion,

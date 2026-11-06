@@ -43,7 +43,7 @@ export function StaffConsole({ overrideReasons }: { overrideReasons: readonly st
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Staff console</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Staff console</h1>
           <p className="text-muted-foreground">Call patients, manage counters and review priority.</p>
         </div>
         <DemoControls onChange={refresh} />
@@ -69,7 +69,11 @@ export function StaffConsole({ overrideReasons }: { overrideReasons: readonly st
               ))}
             </TabsList>
             {data.services.map((service) => (
-              <TabsContent key={service.id} value={service.id} className="pt-3">
+              <TabsContent
+                key={service.id}
+                value={service.id}
+                className="animate-in pt-3 duration-200 ease-out fade-in slide-in-from-bottom-1"
+              >
                 <ServiceQueue service={service} act={act} onSetPriority={setEditing} />
               </TabsContent>
             ))}

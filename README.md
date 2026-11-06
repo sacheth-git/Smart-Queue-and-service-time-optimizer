@@ -27,7 +27,7 @@ Put **Staff** and **Admin** side by side, with a patient token page in a third w
 
 1. **Check-in:** get a token for General OPD and open its token page to show the estimated range.
 2. **Duplicates:** check in again with the same phone number. The existing token comes back.
-3. **Triage:** check in with "Chest pain". On Staff, the urgent suggestion appears. Press **Confirm Urgent**
+3. **Triage:** check in with "Chest pain". On Staff, the urgent suggestion appears. Press **Confirm Critical**
    and watch the queue reorder.
 4. **Override:** press **Change level** on another suggestion, pick a reason, and show it in the Admin audit log.
 5. **Bottleneck:** on Admin, press **Simulate rush**. The Lab alert appears and the `Simulated`

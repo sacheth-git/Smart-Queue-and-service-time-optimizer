@@ -1,4 +1,4 @@
-import { TriangleAlert } from "lucide-react";
+import { Flag, TriangleAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { StaffQueueRow, StaffService } from "@/lib/queue/views";
@@ -23,11 +23,11 @@ export function ServiceQueue({
       </div>
 
       {service.queue.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-muted-foreground">
           Nobody is waiting for {service.name}.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border bg-card">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
           <Table>
             <TableHeader>
               <TableRow>
@@ -57,10 +57,10 @@ export function ServiceQueue({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" variant="ghost" onClick={() => onSetPriority(row)}>
-                      Set priority
+                      <Flag /> Set priority
                     </Button>
                     <Button size="sm" variant="ghost" onClick={() => act.token(row.id, "cancel")}>
-                      Cancel
+                      <X /> Cancel
                     </Button>
                   </TableCell>
                 </TableRow>

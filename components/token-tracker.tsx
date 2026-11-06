@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Clock, TicketX, WifiOff } from "lucide-react";
+import { ArrowRight, Check, Clock, TicketX, WifiOff, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -76,7 +76,7 @@ export function TokenTracker({ code }: { code: string }) {
           <TicketX className="size-10 text-muted-foreground" />
           <p className="text-lg font-medium">This token is no longer active</p>
           <Button render={<Link href="/check-in" />} nativeButton={false} variant="outline">
-            Check in again
+            <ArrowRight /> Check in again
           </Button>
         </CardContent>
       </Card>
@@ -135,7 +135,7 @@ export function TokenTracker({ code }: { code: string }) {
         {(data.status === "waiting" || data.status === "called") && (
           <Dialog open={confirming} onOpenChange={setConfirming}>
             <DialogTrigger render={<Button variant="ghost" className="text-muted-foreground" />}>
-              Cancel my token
+              <X /> Cancel my token
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -145,7 +145,7 @@ export function TokenTracker({ code }: { code: string }) {
               <DialogFooter>
                 <DialogClose render={<Button variant="outline" />}>Keep my token</DialogClose>
                 <Button variant="destructive" onClick={cancel}>
-                  Cancel token
+                  <X /> Cancel token
                 </Button>
               </DialogFooter>
             </DialogContent>

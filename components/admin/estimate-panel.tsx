@@ -24,7 +24,7 @@ export function EstimatePanel({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-1 rounded-lg border p-3">
+          <div className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white shadow-sm p-3">
             <p className="text-sm text-muted-foreground">Average error, replaying the last 7 sample days</p>
             {sample ? (
               <>
@@ -40,7 +40,7 @@ export function EstimatePanel({
               <StatLabel kind="sample" />
             </div>
           </div>
-          <div className="flex flex-col gap-1 rounded-lg border p-3">
+          <div className="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white shadow-sm p-3">
             <p className="text-sm text-muted-foreground">Average error, this session</p>
             <p className="text-2xl font-semibold tabular-nums">{live ? `${live.mae} min` : "No visits yet"}</p>
             <p className="text-sm text-muted-foreground">

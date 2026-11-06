@@ -1,4 +1,4 @@
-import { ArrowRight, CircleCheck, TriangleAlert } from "lucide-react";
+import { ArrowRight, CircleCheck, DoorOpen, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { StatLabel } from "@/components/stat-label";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export function BottleneckAlerts({ items }: { items: Bottleneck[] }) {
           </p>
         )}
         {items.map((item) => (
-          <div key={item.serviceId} className="flex gap-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
+          <div key={item.serviceId} className="flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3 shadow-sm">
             <TriangleAlert className="mt-0.5 size-5 shrink-0 text-amber-700" />
             <div>
               <p className="font-medium">{item.message}</p>
@@ -53,7 +53,7 @@ export function RecommendationCards({ items }: { items: Recommendation[] }) {
           <p className="text-sm text-muted-foreground">No staffing changes would help right now.</p>
         )}
         {items.map((item) => (
-          <div key={item.serviceId} className="flex flex-col gap-2 rounded-lg border p-3">
+          <div key={item.serviceId} className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white shadow-sm p-3">
             <p className="font-medium">{item.title}</p>
             <p className="flex items-center gap-2 text-2xl font-semibold tabular-nums">
               {item.currentAvgWait} min <ArrowRight className="size-5 text-primary" /> {item.projectedAvgWait} min
@@ -62,7 +62,7 @@ export function RecommendationCards({ items }: { items: Recommendation[] }) {
             <div className="flex items-center justify-between gap-2">
               <StatLabel kind="simulated" />
               <Button render={<Link href="/staff" />} nativeButton={false} size="sm" variant="outline">
-                Open a counter
+                <DoorOpen /> Open a counter
               </Button>
             </div>
           </div>
