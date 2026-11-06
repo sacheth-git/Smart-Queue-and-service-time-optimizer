@@ -12,6 +12,12 @@ import {
 
 export type AnnouncerStatus = "off" | "on" | "unavailable";
 
+export const ANNOUNCER_LABEL: Record<AnnouncerStatus, string> = {
+  off: "Turn on announcements",
+  on: "Announcements on",
+  unavailable: "Announcements are not available in this browser",
+};
+
 const SPEECH_RATE = 0.8;
 const CHIME_MS = 700;
 const PAUSE_MS = 500;

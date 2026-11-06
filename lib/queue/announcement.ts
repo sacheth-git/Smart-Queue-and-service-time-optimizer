@@ -63,6 +63,15 @@ export function announcementText({ code, counterLabel, serviceName }: TokenCall,
   );
 }
 
+type BoardService = { serviceName: string; nowServing: { code: string; counterLabel: string }[] };
+
+/** Every token at a counter right now, with only the fields that may be read aloud. */
+export function callsOnBoard(services: BoardService[]): TokenCall[] {
+  return services.flatMap(({ serviceName, nowServing }) =>
+    nowServing.map(({ code, counterLabel }) => ({ code, counterLabel, serviceName })),
+  );
+}
+
 /** Tokens newly on the board. With no earlier look at the board, nothing counts as new. */
 export function findNewCalls<T extends { code: string }>(known: string[] | null, current: T[]): T[] {
   if (!known) return [];

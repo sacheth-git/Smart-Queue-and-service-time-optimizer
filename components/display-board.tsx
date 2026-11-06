@@ -2,37 +2,26 @@
 
 import { Activity, ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { findNewCalls, LANGUAGE_NAMES, type TokenCall } from "@/lib/queue/announcement";
+import { useState } from "react";
+import { LANGUAGE_NAMES } from "@/lib/queue/announcement";
 import type { DisplayService } from "@/lib/queue/views";
 import { cn } from "@/lib/utils";
-import { type AnnouncerStatus, useAnnouncer } from "./use-announcer";
+import { useAnnouncements } from "./announcer-provider";
+import { ANNOUNCER_LABEL } from "./use-announcer";
 import { usePoll } from "./use-poll";
-
-const ANNOUNCER_LABEL: Record<AnnouncerStatus, string> = {
-  off: "Turn on announcements",
-  on: "Announcements on",
-  unavailable: "Announcements are not available in this browser",
-};
 
 export function DisplayBoard() {
   const { data } = usePoll<{ services: DisplayService[] }>("/api/display");
   const [known, setKnown] = useState<string[] | null>(null);
-  const [freshCalls, setFreshCalls] = useState<TokenCall[]>([]);
-  const { status, languages, toggle, announce } = useAnnouncer();
+  const [freshCodes, setFreshCodes] = useState<string[]>([]);
+  const { status, languages, toggle } = useAnnouncements();
 
-  const current =
-    data?.services.flatMap((s) =>
-      s.nowServing.map(({ code, counterLabel }) => ({ code, counterLabel, serviceName: s.serviceName })),
-    ) ?? [];
-  const currentCodes = current.map((call) => call.code);
-  if (data && currentCodes.join() !== known?.join()) {
-    setFreshCalls(findNewCalls(known, current));
-    setKnown(currentCodes);
+  const current = data?.services.flatMap((s) => s.nowServing.map((n) => n.code)) ?? [];
+  if (data && current.join() !== known?.join()) {
+    setFreshCodes(known ? current.filter((code) => !known.includes(code)) : []);
+    setKnown(current);
   }
-  const fresh = new Set(freshCalls.map((call) => call.code));
-
-  useEffect(() => announce(freshCalls), [freshCalls, announce]);
+  const fresh = new Set(freshCodes);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 p-6 text-slate-100">

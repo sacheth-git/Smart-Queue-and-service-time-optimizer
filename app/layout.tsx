@@ -5,6 +5,7 @@ import "@fontsource/ibm-plex-sans/latin-400.css";
 import "@fontsource/ibm-plex-sans/latin-500.css";
 import "@fontsource/ibm-plex-sans/latin-600.css";
 import "@fontsource/ibm-plex-sans/latin-700.css";
+import { AnnouncerProvider } from "@/components/announcer-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full antialiased">
       <body className="flex min-h-full flex-col">
-        {children}
+        <AnnouncerProvider>{children}</AnnouncerProvider>
         <Toaster position="bottom-right" richColors />
       </body>
     </html>

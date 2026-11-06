@@ -1,6 +1,6 @@
 "use client";
 
-import { FastForward, RotateCcw, Users } from "lucide-react";
+import { FastForward, RotateCcw, Users, Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAnnouncements } from "./announcer-provider";
+import { ANNOUNCER_LABEL } from "./use-announcer";
 import { postJson } from "./use-poll";
 
 export function DemoControls({ onChange }: { onChange?: () => void }) {
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const { status, toggle } = useAnnouncements();
 
   async function run(url: string, success: string, body?: unknown) {
     setBusy(true);
@@ -33,6 +36,9 @@ export function DemoControls({ onChange }: { onChange?: () => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white px-3 py-2 shadow-sm">
       <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Demo controls</span>
+      <Button size="sm" variant={status === "on" ? "default" : "outline"} aria-pressed={status === "on"} onClick={toggle}>
+        {status === "on" ? <Volume2 /> : <VolumeX />} {ANNOUNCER_LABEL[status]}
+      </Button>
       <Button
         size="sm"
         variant="outline"

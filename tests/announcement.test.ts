@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import {
   announcementText,
+  callsOnBoard,
   findNewCalls,
   pickVoice,
   speakingOrder,
@@ -26,6 +27,18 @@ test("the announcement names the token, the service and the counter", () => {
 test("the announcement keeps to the token, service and counter fields", () => {
   const withExtra = { ...call("GEN-001"), staffName: "Dr. Secret", priority: "urgent" };
   expect(announcementText(withExtra)).not.toMatch(/Secret|urgent/);
+});
+
+test("every token at a counter is listed with its own service", () => {
+  const board = [
+    { serviceName: "Lab", nowServing: [{ code: "LAB-001", counterLabel: "Counter 1", staffName: "Dr. Secret" }] },
+    { serviceName: "Pharmacy", nowServing: [{ code: "PHA-002", counterLabel: "Counter 2", staffName: null }] },
+    { serviceName: "Pediatrics", nowServing: [] },
+  ];
+  expect(callsOnBoard(board)).toEqual([
+    { code: "LAB-001", counterLabel: "Counter 1", serviceName: "Lab" },
+    { code: "PHA-002", counterLabel: "Counter 2", serviceName: "Pharmacy" },
+  ]);
 });
 
 test("patients already at a counter are not announced on first load", () => {
