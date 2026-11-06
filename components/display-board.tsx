@@ -3,7 +3,7 @@
 import { Activity, ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { chosenLanguages, LANGUAGE_NAMES, LANGUAGES } from "@/lib/queue/announcement";
+import { chosenLanguages, languageHint, LANGUAGE_NAMES, LANGUAGES } from "@/lib/queue/announcement";
 import type { DisplayService } from "@/lib/queue/views";
 import { cn } from "@/lib/utils";
 import { useAnnouncements } from "./announcer-provider";
@@ -22,6 +22,7 @@ export function DisplayBoard() {
     setKnown(current);
   }
   const fresh = new Set(freshCodes);
+  const hint = status === "on" ? languageHint(usable, navigator.onLine) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 p-6 text-slate-100">
@@ -41,7 +42,7 @@ export function DisplayBoard() {
                     type="button"
                     aria-pressed={chosen}
                     disabled={!canSpeak}
-                    title={canSpeak ? undefined : "Needs internet and the Edge browser"}
+                    title={canSpeak ? undefined : (hint ?? undefined)}
                     onClick={() => chooseLanguage(language)}
                     className={cn(
                       "rounded-lg border px-3 py-2 text-base font-medium transition-colors",
@@ -76,6 +77,8 @@ export function DisplayBoard() {
           </Link>
         </div>
       </header>
+
+      {hint && <p className="-mt-3 mb-4 text-right text-base font-medium text-amber-300">{hint}</p>}
 
       {!data ? (
         <div className="grid flex-1 animate-pulse gap-4 rounded-xl bg-slate-900" />

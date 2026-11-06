@@ -5,6 +5,8 @@ type Phrases = { token: string; go: string; counter: string; digits: string[]; s
 
 export const LANGUAGE_NAMES: Record<Language, string> = { en: "English", kn: "ಕನ್ನಡ", hi: "हिन्दी" };
 
+const ENGLISH_NAMES: Record<Language, string> = { en: "English", kn: "Kannada", hi: "Hindi" };
+
 export const LANGUAGES: Language[] = ["en", "kn", "hi"];
 
 const PHRASES: Record<Exclude<Language, "en">, Phrases> = {
@@ -95,6 +97,15 @@ export function pickVoice<T extends VoiceInfo>(
 /** English always stays, since the browser can fall back to its default voice for it. */
 export function usableLanguages(voices: readonly VoiceInfo[], online: boolean): Language[] {
   return LANGUAGES.filter((language) => language === "en" || pickVoice(voices, language, online));
+}
+
+/** Tells staff why a language cannot be chosen, or null when they all can. */
+export function languageHint(usable: Language[], online: boolean): string | null {
+  const missing = LANGUAGES.filter((language) => !usable.includes(language));
+  if (missing.length === 0) return null;
+  const names = missing.map((language) => ENGLISH_NAMES[language]).join(" and ");
+  if (!online) return `${names} need${missing.length === 1 ? "s" : ""} the internet.`;
+  return `For ${names}, open this page in Microsoft Edge.`;
 }
 
 /** The selected languages that can be spoken now. English steps in so that a call is never silent. */

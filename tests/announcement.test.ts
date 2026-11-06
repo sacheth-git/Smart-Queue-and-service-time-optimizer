@@ -4,6 +4,7 @@ import {
   callsOnBoard,
   chosenLanguages,
   findNewCalls,
+  languageHint,
   parseLanguages,
   pickVoice,
   speakingOrder,
@@ -150,6 +151,22 @@ test("a language can be removed", () => {
 
 test("the last selected language cannot be removed", () => {
   expect(toggleLanguage(["kn"], "kn")).toEqual(["kn"]);
+});
+
+test("no hint when every language can be spoken", () => {
+  expect(languageHint(["en", "kn", "hi"], true)).toBeNull();
+});
+
+test("with no internet, the hint says so", () => {
+  expect(languageHint(["en"], false)).toBe("Kannada and Hindi need the internet.");
+});
+
+test("online with no voice, like in Chrome, the hint points to Edge", () => {
+  expect(languageHint(["en"], true)).toBe("For Kannada and Hindi, open this page in Microsoft Edge.");
+});
+
+test("the hint names only the language that is missing", () => {
+  expect(languageHint(["en", "hi"], true)).toBe("For Kannada, open this page in Microsoft Edge.");
 });
 
 test("a saved selection is restored", () => {
