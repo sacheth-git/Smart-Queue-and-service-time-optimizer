@@ -19,9 +19,9 @@ import {
 const MINUTE = 60_000;
 
 const SERVICES = [
-  { id: "general", name: "General OPD", prefix: "GEN", minutes: 10, total: 3, open: 3, daily: 100, today: 40, late: 8 },
+  { id: "general", name: "General OPD", prefix: "GEN", minutes: 10, total: 3, open: 3, daily: 100, today: 40, late: 6 },
   { id: "pediatrics", name: "Pediatrics", prefix: "PED", minutes: 12, total: 2, open: 2, daily: 45, today: 16, late: 4 },
-  { id: "lab", name: "Lab", prefix: "LAB", minutes: 6, total: 3, open: 1, daily: 110, today: 40, late: 0 },
+  { id: "lab", name: "Lab", prefix: "LAB", minutes: 6, total: 3, open: 1, daily: 110, today: 33, late: 0 },
   { id: "pharmacy", name: "Pharmacy", prefix: "PHA", minutes: 4, total: 2, open: 2, daily: 120, today: 30, late: 4 },
 ];
 

@@ -4,7 +4,7 @@ import { counters, historicalVisits, services, tokens, type Service } from "@/li
 import { serviceStats } from "@/lib/estimate/stats";
 
 const MINUTE = 60_000;
-const LONGEST_WAIT_LIMIT = 45;
+const LONGEST_WAIT_LIMIT = 75;
 
 export type BottleneckCause = "too_few_counters" | "slow_service" | "arrival_surge";
 

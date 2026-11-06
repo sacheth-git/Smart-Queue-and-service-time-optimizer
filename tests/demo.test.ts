@@ -147,6 +147,7 @@ test("advance clamps 500 to 30 minutes", () => {
 
 test("advance never uses a closed counter", () => {
   const db = fresh();
+  simulateRush(db, demoNow(db, T0));
   advanceTime(db, 30, T0);
   const held = active(db).filter((t) => t.counterId === "lab-2" || t.counterId === "lab-3");
   expect(held).toHaveLength(0);
