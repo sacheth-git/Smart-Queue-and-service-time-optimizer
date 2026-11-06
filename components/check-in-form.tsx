@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, CircleCheck, Plus, Siren, Ticket, TriangleAlert } from "lucide-react";
+import { ArrowRight, CircleCheck, Plus, QrCode, Siren, Ticket, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { TokenQrDialog } from "./token-qr-dialog";
 import { postJson } from "./use-poll";
 
 type Outcome = "created" | "existing" | "updated";
@@ -37,6 +38,7 @@ export function CheckInForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [showQr, setShowQr] = useState(false);
   const attempt = useRef<string | null>(null);
 
   async function submit(event: React.FormEvent) {
@@ -57,12 +59,16 @@ export function CheckInForm({
     });
     setBusy(false);
     if (response.error) setError(response.error);
-    else setResult(response.data as Result);
+    else {
+      setResult(response.data as Result);
+      setShowQr(true);
+    }
   }
 
   function startOver() {
     attempt.current = null;
     setResult(null);
+    setShowQr(false);
     setPhone("");
     setPicked([]);
   }
@@ -81,10 +87,14 @@ export function CheckInForm({
           <Button render={<Link href={`/t/${result.code}`} />} nativeButton={false} size="lg" className="w-full">
             Track this token <ArrowRight />
           </Button>
+          <Button variant="outline" size="lg" className="w-full" onClick={() => setShowQr(true)}>
+            <QrCode /> Show QR code
+          </Button>
           <Button variant="ghost" onClick={startOver}>
             <Plus /> Check in another patient
           </Button>
         </CardContent>
+        <TokenQrDialog code={result.code} open={showQr} onOpenChange={setShowQr} />
       </Card>
     );
   }

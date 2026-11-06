@@ -9,9 +9,11 @@ import {
   UserCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { tokenPathFromParam } from "@/lib/queue/track-link";
 
 const ROLES = [
   {
@@ -58,7 +60,12 @@ const PROMISES = [
   },
 ];
 
-export default function HomePage() {
+type HomeProps = { searchParams: Promise<{ token?: string | string[] }> };
+
+export default async function HomePage({ searchParams }: HomeProps) {
+  const tokenPath = tokenPathFromParam((await searchParams).token);
+  if (tokenPath) redirect(tokenPath);
+
   return (
     <AppShell>
       <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 py-10 text-center">

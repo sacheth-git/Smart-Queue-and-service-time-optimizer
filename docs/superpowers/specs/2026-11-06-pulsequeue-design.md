@@ -16,7 +16,8 @@ covered.
 ## Decided by the user
 
 - Hospital setting only.
-- A website, presented from one laptop. No phone QR flow or public hosting is required.
+- A website, presented from one laptop. Public hosting is not required. After check-in, a QR code opens the token page on a phone on the
+  same network as the laptop.
 - No API key, so no LLM.
 - Tailwind CSS, Lucide React icons, Shadcn UI patterns.
 - The PS-13 slide is the complete requirements source.
