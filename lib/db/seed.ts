@@ -20,7 +20,7 @@ const MINUTE = 60_000;
 
 const SERVICES = [
   { id: "general", name: "General OPD", prefix: "GEN", minutes: 10, total: 3, open: 3, daily: 100, today: 40, late: 8 },
-  { id: "pediatrics", name: "Pediatrics", prefix: "PED", minutes: 12, total: 2, open: 2, daily: 45, today: 16, late: 5 },
+  { id: "pediatrics", name: "Pediatrics", prefix: "PED", minutes: 12, total: 2, open: 2, daily: 45, today: 16, late: 4 },
   { id: "lab", name: "Lab", prefix: "LAB", minutes: 6, total: 3, open: 1, daily: 110, today: 40, late: 0 },
   { id: "pharmacy", name: "Pharmacy", prefix: "PHA", minutes: 4, total: 2, open: 2, daily: 120, today: 30, late: 4 },
 ];
@@ -61,11 +61,14 @@ export function seedHistory(db: Db, now: number): void {
     if (day.getDay() === 0) continue;
 
     for (const s of SERVICES) {
+      // Some days run slower than others, and busy hours run slower than quiet ones.
+      const dayPace = 0.85 + 0.35 * rng();
       const arrivals = HOURLY_SHARE.flatMap((share, h) => {
         const count = Math.round(s.daily * share * (0.85 + 0.3 * rng()));
+        const hourPace = h >= 1 && h <= 4 ? 1.15 : 0.95;
         return Array.from({ length: count }, () => ({
           atMin: (8 + h) * 60 + rng() * 60,
-          serviceMin: serviceMinutes(rng, s.minutes),
+          serviceMin: serviceMinutes(rng, s.minutes * dayPace * hourPace),
         }));
       }).sort((a, b) => a.atMin - b.atMin);
 
