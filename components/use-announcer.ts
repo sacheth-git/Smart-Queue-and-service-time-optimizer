@@ -1,32 +1,48 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { announcementText, pickVoice, type TokenCall } from "@/lib/queue/announcement";
+import {
+  announcementText,
+  pickVoice,
+  speakingOrder,
+  usableLanguages,
+  type Language,
+  type TokenCall,
+} from "@/lib/queue/announcement";
 
 export type AnnouncerStatus = "off" | "on" | "unavailable";
 
 const SPEECH_RATE = 0.8;
 const CHIME_MS = 700;
 const PAUSE_MS = 500;
+/** An online voice that cannot connect stays silent, so give up and move on to the next language. */
+const SPEECH_START_MS = 5_000;
 /** Browsers sometimes never report the end of speech, which would freeze every later announcement. */
-const LONGEST_SPEECH_MS = 15_000;
+const LONGEST_SPEECH_MS = 20_000;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function say(text: string): Promise<void> {
+function say(text: string, language: Language): Promise<void> {
   return new Promise((resolve) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    const voice = pickVoice(speechSynthesis.getVoices());
+    const voice = pickVoice(speechSynthesis.getVoices(), language, navigator.onLine);
     if (voice) {
       utterance.voice = voice;
       utterance.lang = voice.lang;
     }
     utterance.rate = SPEECH_RATE;
-    const timer = setTimeout(resolve, LONGEST_SPEECH_MS);
-    utterance.onend = utterance.onerror = () => {
-      clearTimeout(timer);
+    const finish = () => {
+      clearTimeout(noStart);
+      clearTimeout(tooLong);
       resolve();
     };
+    const noStart = setTimeout(() => {
+      speechSynthesis.cancel();
+      finish();
+    }, SPEECH_START_MS);
+    const tooLong = setTimeout(finish, LONGEST_SPEECH_MS);
+    utterance.onstart = () => clearTimeout(noStart);
+    utterance.onend = utterance.onerror = finish;
     speechSynthesis.speak(utterance);
   });
 }
@@ -48,6 +64,7 @@ function playChime(audio: AudioContext) {
 /** Browsers only allow sound after a click, so announcements start from the toggle button. */
 export function useAnnouncer() {
   const [status, setStatus] = useState<AnnouncerStatus>("off");
+  const [languages, setLanguages] = useState<Language[]>(["en"]);
   const enabled = useRef(false);
   const audio = useRef<AudioContext | null>(null);
   const queue = useRef<TokenCall[]>([]);
@@ -57,13 +74,16 @@ export function useAnnouncer() {
     if (draining.current) return;
     draining.current = true;
     while (enabled.current && queue.current.length > 0) {
-      const text = announcementText(queue.current.shift()!);
+      const call = queue.current.shift()!;
+      const available = usableLanguages(speechSynthesis.getVoices(), navigator.onLine);
+      setLanguages(available);
       if (audio.current) playChime(audio.current);
       await wait(CHIME_MS);
-      await say(text);
-      await wait(PAUSE_MS);
-      if (enabled.current) await say(text);
-      await wait(PAUSE_MS);
+      for (const language of speakingOrder(available)) {
+        if (!enabled.current) break;
+        await say(announcementText(call, language), language);
+        await wait(PAUSE_MS);
+      }
     }
     draining.current = false;
   }, []);
@@ -91,8 +111,9 @@ export function useAnnouncer() {
     audio.current ??= new AudioContext();
     void audio.current.resume();
     setStatus("on");
+    setLanguages(usableLanguages(speechSynthesis.getVoices(), navigator.onLine));
     playChime(audio.current);
-    void say("Announcements are on.");
+    void say("Announcements are on.", "en");
   }
 
   useEffect(
@@ -105,5 +126,5 @@ export function useAnnouncer() {
     [],
   );
 
-  return { status, toggle, announce };
+  return { status, languages, toggle, announce };
 }

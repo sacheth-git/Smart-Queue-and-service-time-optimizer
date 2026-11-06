@@ -3,7 +3,7 @@
 import { Activity, ArrowLeft, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { findNewCalls, type TokenCall } from "@/lib/queue/announcement";
+import { findNewCalls, LANGUAGE_NAMES, type TokenCall } from "@/lib/queue/announcement";
 import type { DisplayService } from "@/lib/queue/views";
 import { cn } from "@/lib/utils";
 import { type AnnouncerStatus, useAnnouncer } from "./use-announcer";
@@ -19,7 +19,7 @@ export function DisplayBoard() {
   const { data } = usePoll<{ services: DisplayService[] }>("/api/display");
   const [known, setKnown] = useState<string[] | null>(null);
   const [freshCalls, setFreshCalls] = useState<TokenCall[]>([]);
-  const { status, toggle, announce } = useAnnouncer();
+  const { status, languages, toggle, announce } = useAnnouncer();
 
   const current =
     data?.services.flatMap((s) =>
@@ -41,6 +41,11 @@ export function DisplayBoard() {
           <Activity className="size-7 text-teal-400" /> Now serving
         </div>
         <div className="flex items-center gap-4">
+          {status === "on" && (
+            <span className="text-sm text-slate-300">
+              {languages.map((language) => LANGUAGE_NAMES[language]).join(" · ")}
+            </span>
+          )}
           <button
             type="button"
             aria-pressed={status === "on"}

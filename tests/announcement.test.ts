@@ -1,5 +1,12 @@
 import { expect, test } from "vitest";
-import { announcementText, findNewCalls, pickVoice, spellCode } from "@/lib/queue/announcement";
+import {
+  announcementText,
+  findNewCalls,
+  pickVoice,
+  speakingOrder,
+  spellCode,
+  usableLanguages,
+} from "@/lib/queue/announcement";
 
 const call = (code: string, counterLabel = "Counter 2", serviceName = "General OPD") => ({
   code,
@@ -47,4 +54,56 @@ test("an online English voice is used when no installed one exists", () => {
 
 test("no English voice leaves the browser default in place", () => {
   expect(pickVoice([voice("Hindi", "hi-IN")])).toBeUndefined();
+});
+
+const LAPTOP = [
+  voice("Ravi", "en-IN"),
+  voice("Sapna Online", "kn-IN", false),
+  voice("Swara Online", "hi-IN", false),
+];
+
+test("Hindi reads the digits and the counter number as words", () => {
+  expect(announcementText(call("GEN-044"), "hi")).toBe(
+    "टोकन G E N, शून्य चार चार. कृपया जाएं: जनरल ओपीडी, काउंटर दो.",
+  );
+});
+
+test("Kannada reads the digits and the counter number as words", () => {
+  expect(announcementText(call("LAB-007", "Counter 1", "Lab"), "kn")).toBe(
+    "ಟೋಕನ್ L A B, ಸೊನ್ನೆ ಸೊನ್ನೆ ಏಳು. ದಯವಿಟ್ಟು ಹೋಗಿ: ಲ್ಯಾಬ್, ಕೌಂಟರ್ ಒಂದು.",
+  );
+});
+
+test("a service with no translation keeps its English name", () => {
+  expect(announcementText(call("DEN-001", "Counter 1", "Dental"), "hi")).toContain("Dental");
+});
+
+test("each language is matched to its own voice", () => {
+  expect(pickVoice(LAPTOP, "kn")?.name).toBe("Sapna Online");
+  expect(pickVoice(LAPTOP, "hi")?.name).toBe("Swara Online");
+});
+
+test("a language with no voice is skipped rather than read by the wrong voice", () => {
+  expect(pickVoice([voice("Ravi", "en-IN")], "kn")).toBeUndefined();
+});
+
+test("with the internet off, online voices are not used", () => {
+  expect(pickVoice(LAPTOP, "kn", false)).toBeUndefined();
+  expect(usableLanguages(LAPTOP, false)).toEqual(["en"]);
+});
+
+test("with the internet on, every language with a voice is used, English first", () => {
+  expect(usableLanguages(LAPTOP, true)).toEqual(["en", "kn", "hi"]);
+});
+
+test("English stays available even when the browser lists no voices", () => {
+  expect(usableLanguages([], true)).toEqual(["en"]);
+});
+
+test("several languages are each spoken once", () => {
+  expect(speakingOrder(["en", "kn", "hi"])).toEqual(["en", "kn", "hi"]);
+});
+
+test("English alone is spoken twice", () => {
+  expect(speakingOrder(["en"])).toEqual(["en", "en"]);
 });
