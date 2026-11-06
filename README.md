@@ -38,22 +38,6 @@ Put **Staff** and **Admin** side by side, with a patient token page in a third w
 
 Press **Reset demo** to start again.
 
-## How it meets PS-13
-
-| Requirement | Where |
-|---|---|
-| Digital queue token generation | `/check-in` |
-| Waiting-time estimates from sample or live data | `/t/[code]`, explained on `/admin` |
-| Queue status and progress dashboard | `/t/[code]`, `/display`, `/staff` |
-| Peak-hour and bottleneck identification | `/admin` heatmap and live alerts |
-| Service analytics and efficiency recommendations | `/admin` |
-| Estimates are not guaranteed service times | Always a range with "estimated" wording |
-| Prevent duplicate or inconsistent entries | Database unique index and idempotent check-in |
-| Minimize personal information | No names or notes. Phone stored as a keyed hash plus last 4 digits |
-| Handle cancellations and completions consistently | One state machine in `lib/queue/transitions.ts` |
-| Measure efficiency gains or label them as estimates | Every figure is labelled `Measured in demo`, `Simulated`, `Sample data` or `Estimated` |
-| Urgency-based prioritization under human supervision | Suggestions never change the order. Only staff confirmation does, and each decision is logged |
-
 ## How the "AI" works
 
 There is no LLM, so it runs offline and every result can be explained.
