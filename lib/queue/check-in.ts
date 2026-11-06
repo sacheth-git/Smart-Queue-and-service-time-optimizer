@@ -4,6 +4,7 @@ import type { Db } from "@/lib/db/client";
 import { services, tokenEvents, tokens, type Token } from "@/lib/db/schema";
 import { DomainError } from "@/lib/errors";
 import { hashPhone } from "@/lib/queue/phone";
+import { estimateForToken } from "@/lib/queue/views";
 import { assertKnownItems, suggestPriority } from "@/lib/triage/rules";
 import { ACTIVE_STATUSES } from "@/lib/types";
 
@@ -96,6 +97,15 @@ export function checkIn(db: Db, input: CheckInInput): CheckInResult {
     db.insert(tokenEvents)
       .values({ tokenId: token.id, type: "checked_in", toStatus: "waiting", at: now, actor: "patient" })
       .run();
-    return { token, outcome: "created" };
+
+    const estimate = estimateForToken(db, token, now);
+    if (estimate.kind === "no_counter") return { token, outcome: "created" };
+    const withEstimate = db
+      .update(tokens)
+      .set({ estLowMin: estimate.lowMin, estHighMin: estimate.highMin, estMidMin: estimate.midMin })
+      .where(eq(tokens.id, token.id))
+      .returning()
+      .get();
+    return { token: withEstimate, outcome: "created" };
   });
 }
