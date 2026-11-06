@@ -48,6 +48,7 @@ export function transition(db: Db, tokenId: string, to: TokenStatus, ctx: Transi
       changes.finishedAt = ctx.now;
       changes.phoneHash = null;
       changes.itemCodesJson = null;
+      changes.reasonsJson = null;
       changes.counterId = null;
       if (ctx.endedEarly) changes.endedEarly = 1;
     }

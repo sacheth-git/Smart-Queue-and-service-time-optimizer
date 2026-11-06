@@ -2,6 +2,11 @@ export type WaitEstimate =
   | { kind: "range"; lowMin: number; highMin: number; midMin: number }
   | { kind: "no_counter" };
 
+/** Someone already at a counter is, on average, about halfway through their visit. */
+export function effectiveAhead(waiting: number, atCounter: number): number {
+  return waiting + atCounter / 2;
+}
+
 const roundTo5 = (minutes: number) => Math.round(minutes / 5) * 5;
 
 export function estimateWait(input: {

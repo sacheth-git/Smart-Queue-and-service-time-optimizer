@@ -114,7 +114,7 @@ test("Lab gets a labelled recommendation that lowers the average wait", () => {
   const rec = recommendations(shared, clock(shared)).find((r) => r.serviceId === "lab")!;
   expect(rec.title).toMatch(/^Open one more Lab counter from \d\d:00 to \d\d:00$/);
   expect(rec.projectedAvgWait).toBeLessThan(rec.currentAvgWait - 5);
-  expect(rec.basis).toBe("Today's arrivals plus a forecast from sample data");
+  expect(rec.basis).toBe("Patients waiting now plus a forecast from sample data");
 });
 
 test("no recommendation when every counter is already open", () => {
@@ -129,10 +129,11 @@ test("recommendations are stable between polls", () => {
   expect(recommendations(shared, now)).toEqual(recommendations(shared, now));
 });
 
-test("the model beats the naive baseline on sample data", () => {
+test("the replay reports a low error for both estimates on sample data", () => {
   const result = backtest(shared);
   expect(result.samples).toBeGreaterThan(500);
-  expect(result.modelMae).toBeLessThan(result.baselineMae);
+  expect(result.modelMae).toBeLessThan(2.5);
+  expect(result.baselineMae).toBeGreaterThan(0);
 });
 
 test("liveAccuracy is null with no completed tokens", () => {

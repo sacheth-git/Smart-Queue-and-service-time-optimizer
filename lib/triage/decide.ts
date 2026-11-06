@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import { tokenEvents, tokens, triageDecisions, type Token } from "@/lib/db/schema";
 import { DomainError } from "@/lib/errors";
-import type { Priority } from "@/lib/types";
+import { ACTIVE_STATUSES, type Priority } from "@/lib/types";
 
 export const OVERRIDE_REASONS = [
   "Assessed in person",
@@ -25,8 +25,8 @@ export function decideTriage(db: Db, input: TriageDecisionInput): Token {
   return db.transaction(() => {
     const token = db.select().from(tokens).where(eq(tokens.id, tokenId)).get();
     if (!token) throw new DomainError("token_not_found", "That token no longer exists.", 404);
-    if (token.status !== "waiting") {
-      throw new DomainError("not_waiting", "Priority can only be set while a patient is waiting.");
+    if (!(ACTIVE_STATUSES as readonly string[]).includes(token.status)) {
+      throw new DomainError("not_active", "This patient is no longer in the queue.");
     }
     const isOverride = token.suggestedPriority !== null && token.suggestedPriority !== decision;
     if (isOverride && !overrideReason) {

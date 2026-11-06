@@ -2,10 +2,20 @@ import { and, eq, gte, isNotNull, lt } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import { historicalVisits, services, tokens } from "@/lib/db/schema";
 import { medianOf } from "@/lib/estimate/stats";
-import { blendServiceTime, meanOf, sdOf } from "@/lib/estimate/wait";
+import { blendServiceTime, effectiveAhead, meanOf, sdOf } from "@/lib/estimate/wait";
 
 const DAY = 86_400_000;
 const MINUTE = 60_000;
+
+/** Counts the people ahead the same way as the live estimate. */
+export function aheadAtArrival(
+  earlier: { startedAt: number; completedAt: number }[],
+  arrivedAt: number,
+): number {
+  const waiting = earlier.filter((v) => v.startedAt > arrivedAt).length;
+  const atCounter = earlier.filter((v) => v.startedAt <= arrivedAt && v.completedAt > arrivedAt).length;
+  return effectiveAhead(waiting, atCounter);
+}
 
 /**
  * Replays the last 7 sample days using only what was known at each arrival:
@@ -48,7 +58,7 @@ export function backtest(db: Db): { modelMae: number; baselineMae: number; sampl
       visits.sort((a, b) => a.arrivedAt - b.arrivedAt);
       visits.forEach((visit, index) => {
         const earlier = visits.slice(0, index);
-        const ahead = earlier.filter((v) => v.startedAt > visit.arrivedAt).length;
+        const ahead = aheadAtArrival(earlier, visit.arrivedAt);
         const today = earlier.filter((v) => v.completedAt <= visit.arrivedAt).map((v) => v.serviceMin);
         const { median, sd } = hourly.get(visit.hour)!;
         const { mean } = blendServiceTime({

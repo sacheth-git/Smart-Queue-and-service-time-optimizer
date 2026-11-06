@@ -2,7 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import type { Db } from "@/lib/db/client";
 import { counters, services, tokens, type Token } from "@/lib/db/schema";
 import { serviceStats } from "@/lib/estimate/stats";
-import { estimateWait, type WaitEstimate } from "@/lib/estimate/wait";
+import { effectiveAhead, estimateWait, type WaitEstimate } from "@/lib/estimate/wait";
 import { ACTIVE_STATUSES, PRIORITY_RANK, type Priority, type TokenStatus } from "@/lib/types";
 import { needsWaitReview, sortQueue } from "./order";
 
@@ -31,10 +31,12 @@ const openCounterCount = (db: Db, serviceId: string) =>
     .all().length;
 
 export function estimateForToken(db: Db, token: Token, now: number): WaitEstimate {
-  const ahead = orderedActive(db, token.serviceId).findIndex((t) => t.id === token.id);
+  const ordered = orderedActive(db, token.serviceId);
+  const before = ordered.slice(0, Math.max(0, ordered.findIndex((t) => t.id === token.id)));
+  const atCounter = before.filter((t) => t.status !== "waiting").length;
   const { mean, sd } = serviceStats(db, token.serviceId, now);
   return estimateWait({
-    ahead: Math.max(0, ahead),
+    ahead: effectiveAhead(before.length - atCounter, atCounter),
     openCounters: openCounterCount(db, token.serviceId),
     mean,
     sd,
@@ -159,7 +161,7 @@ export function staffView(db: Db, now: number): StaffView {
   const result = allServices.map((service): StaffService => {
     const ordered = orderedActive(db, service.id);
     const waiting = ordered.filter((t) => t.status === "waiting");
-    pending.push(...waiting.filter((t) => t.suggestedPriority && t.triageReviewedAt === null));
+    pending.push(...ordered.filter((t) => t.suggestedPriority && t.triageReviewedAt === null));
     const { mean, sd } = serviceStats(db, service.id, now);
     const list = db.select().from(counters).where(eq(counters.serviceId, service.id)).all();
     return {
@@ -171,7 +173,7 @@ export function staffView(db: Db, now: number): StaffView {
       }),
       queue: waiting.map((t) => toRow(t, now)),
       estimate: estimateWait({
-        ahead: ordered.length,
+        ahead: effectiveAhead(waiting.length, ordered.length - waiting.length),
         openCounters: list.filter((c) => c.isOpen).length,
         mean,
         sd,

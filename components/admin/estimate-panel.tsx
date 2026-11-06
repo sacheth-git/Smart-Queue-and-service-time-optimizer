@@ -18,8 +18,8 @@ export function EstimatePanel({
       <CardHeader>
         <CardTitle>How wait estimates work</CardTitle>
         <CardDescription>
-          People ahead × average visit ÷ open counters, shown as a range. The average blends sample history with
-          today, trusting today more as visits finish.
+          People ahead × average visit ÷ open counters, shown as a range. Anyone already at a counter counts as
+          half a visit. The average blends sample history with today, trusting today more as visits finish.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -77,6 +77,9 @@ export function EstimatePanel({
               ))}
             </TableBody>
           </Table>
+        </div>
+        <div>
+          <StatLabel kind="estimated" />
         </div>
       </CardContent>
     </Card>

@@ -24,14 +24,13 @@ function mergeItems(db: Db, active: Token, itemCodes: string[], now: number): Ch
 
   const merged = [...known, ...added];
   const suggestion = suggestPriority(merged);
-  const changed = suggestion?.level !== active.suggestedPriority;
   const token = db
     .update(tokens)
     .set({
       itemCodesJson: JSON.stringify(merged),
       suggestedPriority: suggestion?.level ?? null,
       reasonsJson: JSON.stringify(suggestion?.reasons ?? []),
-      triageReviewedAt: changed ? null : active.triageReviewedAt,
+      triageReviewedAt: null,
     })
     .where(eq(tokens.id, active.id))
     .returning()

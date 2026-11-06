@@ -143,7 +143,8 @@ For a token with `n` people ahead in its service and `c` open counters:
   minutes and a floor of 0.
 - With no counter open, show "Waiting for a counter to open" instead of a number.
 
-`n` counts every active token ordered ahead, including those already called. Estimates are recomputed on
+`n` counts every waiting token ordered ahead, plus half of each token already at a counter, since those
+patients are on average halfway through their visit. Estimates are recomputed on
 read, so a priority confirmation, cancellation or closed counter shows up on the next poll. The admin
 page shows the current inputs for any service, so the estimate can be explained.
 
@@ -163,8 +164,8 @@ generated activity.
   the cause: too few counters, a slow service time, or an arrival surge.
 - **Recommendations:** rule-generated actions, for example "Open one more Lab counter from 10:00 to
   12:00". Each shows its impact, calculated by a simple discrete-event simulation with the changed
-  counter count, and is labelled `Simulated`. Its input is today's arrivals so far plus a forecast for
-  the rest of the day from the sample data for that weekday, and the card says so.
+  counter count, and is labelled `Simulated`. Its input is the patients waiting now plus a forecast of
+  arrivals from now on, from the sample data for that weekday, and the card says so.
 
 ## Data
 
@@ -219,7 +220,11 @@ The user handed these to the assistant, so they were not explicitly chosen by th
 - Demo-only app, with the demo clock reset to a weekday at 11:00 and a pre-filled morning.
 - A fourth and fifth label: `Measured in demo` replaces `Measured`, since no real patients are involved,
   and `Estimated` covers any heuristic figure.
-- Simulation input of today's arrivals so far plus a forecast from sample data.
+- Simulation input of patients waiting now plus a forecast from sample data.
+- Staff can record a decision for any active token, so a called patient reporting a new item still
+  reaches staff review.
+- People at a counter count as half a visit in the estimate, after review showed that counting them as
+  a full visit overestimated waits.
 - The simple minute-by-minute Advance time described above.
 - New items on a repeat check-in are merged and alert staff, rather than being dropped.
 

@@ -49,16 +49,18 @@ function WaitPanel({ view }: { view: PublicTokenView }) {
         Position <span className="font-semibold text-foreground">{view.position}</span> in the queue
       </p>
       {estimate?.kind === "range" ? (
-        <p className="flex items-center gap-2 text-2xl font-semibold">
-          <Clock className="size-5 text-primary" />
-          Estimated wait: {estimate.lowMin}–{estimate.highMin} min
-        </p>
+        <>
+          <p className="flex items-center gap-2 text-2xl font-semibold">
+            <Clock className="size-5 text-primary" />
+            Estimated wait: {estimate.lowMin}–{estimate.highMin} min
+          </p>
+          <p className="text-sm text-muted-foreground">
+            This is an estimate, not a set time. Urgent cases may be seen first, so it can change.
+          </p>
+        </>
       ) : (
         <p className="text-xl font-semibold">Waiting for a counter to open</p>
       )}
-      <p className="text-sm text-muted-foreground">
-        This is an estimate, not a guaranteed time. Urgent cases may be seen first, so it can change.
-      </p>
     </div>
   );
 }

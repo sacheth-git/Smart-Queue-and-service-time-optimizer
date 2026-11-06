@@ -17,6 +17,8 @@ npm start
 
 Open http://localhost:3000. Every start restores the demo to a weekday at 11:00. All data is synthetic.
 
+The demo clock keeps running, so press **Reset demo** just before presenting.
+
 Other commands: `npm test`, `npm run typecheck`, `npm run lint`.
 
 ## Demo script (about 3 minutes)
@@ -28,8 +30,10 @@ Put **Staff** and **Admin** side by side, with a patient token page in a third w
 3. **Triage:** check in with "Chest pain". On Staff, the urgent suggestion appears. Press **Confirm Urgent**
    and watch the queue reorder.
 4. **Override:** press **Change level** on another suggestion, pick a reason, and show it in the Admin audit log.
-5. **Bottleneck:** on Admin, press **Simulate rush**. The Lab alert and a `Simulated` recommendation appear.
-6. **Act on it:** on Staff, open the **Lab** tab and press **Open counter**. The waits drop.
+5. **Bottleneck:** on Admin, press **Simulate rush**. The Lab alert appears and the `Simulated`
+   recommendation jumps.
+6. **Act on it:** on Staff, open the **Lab** tab and press **Open counter**. Open the token page for the last
+   Lab token first, so that judges can see its range drop.
 7. **Consistency:** cancel a token and complete another. The display and dashboard stay in agreement.
 
 Press **Reset demo** to start again.
@@ -54,8 +58,9 @@ Press **Reset demo** to start again.
 
 There is no LLM, so it runs offline and every result can be explained.
 
-- **Wait estimate:** people ahead × average visit ÷ open counters, shown as a range. The average blends
-  sample history for that hour with today's completed visits.
+- **Wait estimate:** people ahead × average visit ÷ open counters, shown as a range. Anyone already at a
+  counter counts as half a visit. The average blends sample history for that hour with today's completed
+  visits.
 - **Priority suggestion:** transparent rules map check-in items to a suggested level with reasons.
 - **Recommendations:** a queue simulation compares the current counters with one more.
 

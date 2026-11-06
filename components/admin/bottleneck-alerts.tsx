@@ -31,6 +31,11 @@ export function BottleneckAlerts({ items }: { items: Bottleneck[] }) {
             </div>
           </div>
         ))}
+        {items.length > 0 && (
+          <div>
+            <StatLabel kind="estimated" />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -53,7 +58,7 @@ export function RecommendationCards({ items }: { items: Recommendation[] }) {
             <p className="flex items-center gap-2 text-2xl font-semibold tabular-nums">
               {item.currentAvgWait} min <ArrowRight className="size-5 text-primary" /> {item.projectedAvgWait} min
             </p>
-            <p className="text-sm text-muted-foreground">Projected average wait. {item.basis}.</p>
+            <p className="text-sm text-muted-foreground">Projected average wait from now. {item.basis}.</p>
             <div className="flex items-center justify-between gap-2">
               <StatLabel kind="simulated" />
               <Button render={<Link href="/staff" />} nativeButton={false} size="sm" variant="outline">

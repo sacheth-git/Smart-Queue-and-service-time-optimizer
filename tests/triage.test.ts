@@ -85,10 +85,10 @@ test("staff can raise a token with no suggestion and no reason", () => {
   );
 });
 
-test("deciding on a token that is not waiting is rejected", () => {
+test("deciding on a token that has left the queue is rejected", () => {
   const { db, first } = setup([]);
-  transition(db, first.id, "called", { now: T0, actor: "staff", counterId: "general-1" });
-  expect(() => decideTriage(db, { tokenId: first.id, decision: "urgent", ...decide })).toThrow(/waiting/i);
+  transition(db, first.id, "cancelled", { now: T0, actor: "patient" });
+  expect(() => decideTriage(db, { tokenId: first.id, decision: "urgent", ...decide })).toThrow(/no longer/i);
 });
 
 test("audit rows contain no phone data", () => {

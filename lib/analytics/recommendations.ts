@@ -7,7 +7,6 @@ import { mulberry32, normal } from "@/lib/rng";
 import { peakHours } from "./peaks";
 import { simulateQueue, type Arrival } from "./simulate";
 
-const MINUTE = 60_000;
 const MIN_IMPROVEMENT = 5;
 
 export type Recommendation = {
@@ -21,11 +20,12 @@ export type Recommendation = {
 
 const clockLabel = (hour: number) => `${String(hour).padStart(2, "0")}:00`;
 
-/** Patients already waiting, plus arrivals expected from sample data for this weekday. */
-function forecastArrivals(db: Db, service: Service, now: number, endHour: number, mean: number): Arrival[] {
+/** Patients waiting now, plus arrivals expected from now on. Waits are measured from now. */
+export function forecastArrivals(db: Db, service: Service, now: number, endHour: number, mean: number): Arrival[] {
   const rng = mulberry32(7);
   const date = new Date(now);
   const startOfHour = date.getHours();
+  const nowMin = startOfHour * 60 + date.getMinutes() + date.getSeconds() / 60;
   const duration = () => Math.max(1.5, normal(rng, mean, 0.3 * mean));
 
   const waiting = db
@@ -34,7 +34,7 @@ function forecastArrivals(db: Db, service: Service, now: number, endHour: number
     .where(and(eq(tokens.serviceId, service.id), eq(tokens.status, "waiting")))
     .all()
     .sort((a, b) => a.checkedInAt - b.checkedInAt)
-    .map((t) => ({ atMin: (t.checkedInAt - now) / MINUTE, serviceMin: duration() }));
+    .map(() => ({ atMin: 0, serviceMin: duration() }));
 
   const history = db
     .select()
@@ -45,10 +45,11 @@ function forecastArrivals(db: Db, service: Service, now: number, endHour: number
 
   const future: Arrival[] = [];
   for (let hour = startOfHour; hour < endHour; hour++) {
-    const expected = Math.round(history.filter((v) => v.hour === hour).length / days);
-    const offset = (hour - startOfHour) * 60;
+    const from = Math.max(hour * 60, nowMin);
+    const span = (hour + 1) * 60 - from;
+    const expected = Math.round(((history.filter((v) => v.hour === hour).length / days) * span) / 60);
     for (let i = 0; i < expected; i++) {
-      future.push({ atMin: offset + ((i + 0.5) / expected) * 60, serviceMin: duration() });
+      future.push({ atMin: from - nowMin + ((i + 0.5) / expected) * span, serviceMin: duration() });
     }
   }
   return [...waiting, ...future];
@@ -78,7 +79,7 @@ function recommendFor(db: Db, service: Service, now: number): Recommendation | n
     windowLabel,
     currentAvgWait,
     projectedAvgWait,
-    basis: "Today's arrivals plus a forecast from sample data",
+    basis: "Patients waiting now plus a forecast from sample data",
   };
 }
 
