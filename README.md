@@ -15,7 +15,7 @@ npm run build
 npm start
 ```
 
-Open http://localhost:3000. Every start restores the demo to a weekday at 11:00. All data is synthetic.
+Open https://smart-queue-and-service-time-optimizer.onrender.com/  Every start restores the demo to a weekday at 11:00. All data is synthetic.
 
 The demo clock keeps running, so press **Reset demo** just before presenting.
 
