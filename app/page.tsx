@@ -13,6 +13,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { LiveQueuePreview } from "@/components/home/live-queue-preview";
+import { PulseLine } from "@/components/home/pulse-line";
 import { tokenPathFromParam } from "@/lib/queue/track-link";
 
 const ROLES = [
@@ -74,13 +75,10 @@ export default async function HomePage({ searchParams }: HomeProps) {
             <span className="block">Clearer waits.</span>
             <span className="block text-brand">Staff stay in charge.</span>
           </h1>
-          <p className="mt-5 max-w-[34em] text-lg text-navy-soft md:text-[19px]">
-            Patients get a digital token and an estimated wait range they can follow on their phone. Staff confirm
-            every priority, and the dashboard spots bottlenecks before the waiting room fills up.
-          </p>
+          <PulseLine />
           <Link
             href="/check-in"
-            className="group mt-8 inline-flex h-[52px] w-full items-center justify-center gap-2.5 rounded-xl bg-brand px-6 text-base font-semibold text-white shadow-[0_10px_22px_-10px_rgb(21_158_154/0.9)] transition hover:-translate-y-px hover:bg-brand-strong active:translate-y-px active:scale-[0.98] sm:w-auto"
+            className="group mt-7 inline-flex h-[52px] w-full items-center justify-center gap-2.5 rounded-xl bg-brand px-6 text-base font-semibold text-white shadow-[0_10px_22px_-10px_rgb(21_158_154/0.9)] transition hover:-translate-y-px hover:bg-brand-strong active:translate-y-px active:scale-[0.98] sm:w-auto"
           >
             Get a token
             <ArrowRight className="size-5 transition-transform group-hover:translate-x-0.5" />
@@ -103,12 +101,9 @@ export default async function HomePage({ searchParams }: HomeProps) {
       </section>
 
       <section aria-labelledby="roles-heading" className="pt-6 pb-10">
-        <h2 id="roles-heading" className="text-[26px] font-bold tracking-tight text-balance">
+        <h2 id="roles-heading" className="mb-6 text-[26px] font-bold tracking-tight text-balance">
           One queue, four views
         </h2>
-        <p className="mt-1 mb-6 text-navy-soft">
-          Every screen reads the same live queue, so patients, staff and managers always agree.
-        </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {ROLES.map(({ href, icon: Icon, title, body }) => (
             <Link

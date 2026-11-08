@@ -17,6 +17,27 @@
   --color-emergency-soft: #fcecee;
 }
 
+/* A bright segment travels along the home page heartbeat line. */
+.pq-pulse-trace {
+  stroke-dasharray: 150 900;
+  stroke-dashoffset: 1050;
+  animation: pq-pulse-trace 2.6s linear infinite;
+}
+
+@keyframes pq-pulse-trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pq-pulse-trace {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
