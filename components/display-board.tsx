@@ -72,7 +72,7 @@ export function DisplayBoard() {
             {status === "on" ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
             {ANNOUNCER_LABEL[status]}
           </button>
-          <Link href="/staff" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300">
+          <Link href="/" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300">
             <ArrowLeft className="size-4" /> Back
           </Link>
         </div>
