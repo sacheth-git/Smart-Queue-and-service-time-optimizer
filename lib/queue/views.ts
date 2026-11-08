@@ -201,3 +201,47 @@ export function staffView(db: Db, now: number): StaffView {
   );
   return { services: result, pendingReview: pending.map((t) => toRow(t, now)) };
 }
+
+export type HomeService = {
+  serviceId: string;
+  serviceName: string;
+  waiting: number;
+  openCounters: number;
+  joinNowEstimate: WaitEstimate;
+  nowServing: { code: string; counterLabel: string; staffName: string | null }[];
+  upNext: { code: string; estimate: WaitEstimate }[];
+};
+
+/** Public home page. Built field by field so that triage and phone data can never leak here. */
+export function homeView(db: Db, now: number): HomeService[] {
+  return db
+    .select()
+    .from(services)
+    .all()
+    .map((service) => {
+      const ordered = orderedActive(db, service.id);
+      const waiting = ordered.filter((t) => t.status === "waiting");
+      const atCounter = ordered.length - waiting.length;
+      const list = db.select().from(counters).where(eq(counters.serviceId, service.id)).all();
+      const byId = new Map(list.map((c) => [c.id, c]));
+      const openCounters = list.filter((c) => c.isOpen).length;
+      const { mean, sd } = serviceStats(db, service.id, now);
+      const estimate = (ahead: number) =>
+        estimateWait({ ahead: effectiveAhead(ahead, atCounter), openCounters, mean, sd });
+      return {
+        serviceId: service.id,
+        serviceName: service.name,
+        waiting: waiting.length,
+        openCounters,
+        joinNowEstimate: estimate(waiting.length),
+        nowServing: ordered
+          .filter((t) => t.status !== "waiting")
+          .map((t) => ({
+            code: t.code,
+            counterLabel: byId.get(t.counterId!)?.label ?? "",
+            staffName: byId.get(t.counterId!)?.staffName ?? null,
+          })),
+        upNext: waiting.slice(0, 5).map((t, index) => ({ code: t.code, estimate: estimate(index) })),
+      };
+    });
+}

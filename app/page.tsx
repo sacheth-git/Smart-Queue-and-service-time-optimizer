@@ -3,16 +3,16 @@ import {
   ClipboardPlus,
   Clock,
   LayoutDashboard,
+  Lock,
   MonitorPlay,
   ShieldCheck,
+  Siren,
   Stethoscope,
-  UserCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LiveQueuePreview } from "@/components/home/live-queue-preview";
 import { tokenPathFromParam } from "@/lib/queue/track-link";
 
 const ROLES = [
@@ -20,44 +20,32 @@ const ROLES = [
     href: "/check-in",
     icon: ClipboardPlus,
     title: "Check-in",
-    body: "Patients pick a service and get a digital token in under a minute.",
+    body: "Patients pick a service and get a token in under a minute.",
   },
   {
     href: "/display",
     icon: MonitorPlay,
-    title: "Waiting room",
-    body: "A public board showing who is being served and who is next.",
+    title: "Waiting Room",
+    body: "A public board, with spoken calls in English, Kannada and Hindi.",
   },
   {
     href: "/staff",
     icon: Stethoscope,
-    title: "Staff console",
-    body: "Call patients, manage counters and review suggested priority.",
+    title: "Staff",
+    body: "Call patients, run counters and confirm priority.",
   },
   {
     href: "/admin",
     icon: LayoutDashboard,
-    title: "Operations dashboard",
-    body: "See peak hours and bottlenecks, and test staffing changes.",
+    title: "Admin",
+    body: "See peaks and bottlenecks, and add counters when needed.",
   },
 ];
 
 const PROMISES = [
-  {
-    icon: UserCheck,
-    title: "Staff decide priority",
-    body: "The system suggests and explains. A person confirms every decision, and it never replaces clinical judgement.",
-  },
-  {
-    icon: Clock,
-    title: "Honest estimates",
-    body: "Waits are shown as ranges that update live. They are estimates, never promises.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Minimal personal data",
-    body: "No names or medical notes. Public screens show token numbers only.",
-  },
+  { icon: ShieldCheck, text: "Staff confirm every priority" },
+  { icon: Clock, text: "Waits shown as ranges" },
+  { icon: Lock, text: "No patient names stored" },
 ];
 
 type HomeProps = { searchParams: Promise<{ token?: string | string[] }> };
@@ -68,43 +56,77 @@ export default async function HomePage({ searchParams }: HomeProps) {
 
   return (
     <AppShell>
-      <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 py-10 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl">
-          Shorter queues. Clearer waits. Staff stay in charge.
-        </h1>
-        <p className="max-w-2xl text-lg text-muted-foreground">
-          PulseQueue AI helps a hospital outpatient department issue tokens, estimate waits and put staff where
-          they are needed most.
-        </p>
-        <Button render={<Link href="/check-in" />} nativeButton={false} size="lg">
-          Start with check-in <ArrowRight />
-        </Button>
-      </section>
-
-      <section aria-label="Screens" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {ROLES.map(({ href, icon: Icon, title, body }) => (
-          <Link key={href} href={href} className="group rounded-xl focus-visible:ring-3 focus-visible:ring-ring">
-            <Card className="h-full transition-colors group-hover:border-primary">
-              <CardHeader>
-                <Icon className="size-6 text-primary" />
-                <CardTitle>{title}</CardTitle>
-                <CardDescription>{body}</CardDescription>
-              </CardHeader>
-            </Card>
+      <section className="relative isolate grid items-center gap-10 py-6 lg:grid-cols-[1.02fr_1fr] lg:gap-14 lg:py-12">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-[-30%] right-[-10%] -z-10 h-[640px] w-[640px] max-w-full rounded-full bg-[radial-gradient(closest-side,rgb(21_158_154/0.14),transparent_70%)]"
+        />
+        <div className="min-w-0">
+          <span className="inline-flex items-center gap-2 rounded-full bg-mint py-1.5 pr-3 pl-2.5 text-[13px] font-semibold text-brand-strong">
+            <span className="relative flex size-2" aria-hidden="true">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-75 motion-reduce:animate-none" />
+              <span className="relative inline-flex size-2 rounded-full bg-brand" />
+            </span>
+            Smart queue for outpatient departments
+          </span>
+          <h1 className="mt-5 text-[clamp(2.4rem,5.2vw,3.75rem)] leading-[1.04] font-bold tracking-[-0.035em] text-balance">
+            <span className="block">Shorter queues.</span>
+            <span className="block">Clearer waits.</span>
+            <span className="block text-brand">Staff stay in charge.</span>
+          </h1>
+          <p className="mt-5 max-w-[34em] text-lg text-navy-soft md:text-[19px]">
+            Patients get a digital token and an estimated wait range they can follow on their phone. Staff confirm
+            every priority, and the dashboard spots bottlenecks before the waiting room fills up.
+          </p>
+          <Link
+            href="/check-in"
+            className="group mt-8 inline-flex h-[52px] w-full items-center justify-center gap-2.5 rounded-xl bg-brand px-6 text-base font-semibold text-white shadow-[0_10px_22px_-10px_rgb(21_158_154/0.9)] transition hover:-translate-y-px hover:bg-brand-strong active:translate-y-px active:scale-[0.98] sm:w-auto"
+          >
+            Get a token
+            <ArrowRight className="size-5 transition-transform group-hover:translate-x-0.5" />
           </Link>
-        ))}
+          <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2.5 text-sm text-navy-soft">
+            {PROMISES.map(({ icon: Icon, text }) => (
+              <li key={text} className="flex items-center gap-2">
+                <Icon className="size-4 text-brand" />
+                {text}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-7 flex max-w-[34em] items-center gap-2.5 rounded-xl bg-emergency-soft px-3.5 py-2.5 text-sm font-medium text-[#9b2c33]">
+            <Siren className="size-4 shrink-0 text-emergency" />
+            In an emergency, tell a staff member now. Do not wait for a token.
+          </p>
+        </div>
+
+        <LiveQueuePreview />
       </section>
 
-      <section aria-label="Our principles" className="mt-8 grid gap-6 border-t pt-8 md:grid-cols-3">
-        {PROMISES.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="flex gap-3">
-            <Icon className="mt-0.5 size-5 shrink-0 text-primary" />
-            <CardContent className="p-0">
-              <p className="font-medium">{title}</p>
-              <p className="text-sm text-muted-foreground">{body}</p>
-            </CardContent>
-          </div>
-        ))}
+      <section aria-labelledby="roles-heading" className="pt-6 pb-10">
+        <h2 id="roles-heading" className="text-[26px] font-bold tracking-tight text-balance">
+          One queue, four views
+        </h2>
+        <p className="mt-1 mb-6 text-navy-soft">
+          Every screen reads the same live queue, so patients, staff and managers always agree.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ROLES.map(({ href, icon: Icon, title, body }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group flex min-w-0 flex-col gap-2.5 rounded-[14px] border border-line bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-[#c9dce6] hover:shadow-md"
+            >
+              <span className="flex size-[42px] items-center justify-center rounded-xl bg-mint text-brand">
+                <Icon className="size-5" />
+              </span>
+              <h3 className="mt-1 text-[17px] font-semibold">{title}</h3>
+              <p className="text-sm text-navy-soft">{body}</p>
+              <span className="mt-auto flex items-center gap-1.5 pt-1.5 text-sm font-semibold text-brand-strong">
+                Open <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
     </AppShell>
   );

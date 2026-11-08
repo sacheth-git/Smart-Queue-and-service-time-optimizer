@@ -4,6 +4,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* PulseQueue brand palette, used by the home page and the navigation bar. */
+@theme {
+  --color-brand: #159e9a;
+  --color-brand-strong: #0f7f7c;
+  --color-navy: #102a43;
+  --color-navy-soft: #486581;
+  --color-mint: #e7f7f5;
+  --color-canvas: #f7fafc;
+  --color-line: #dce6ee;
+  --color-emergency: #e05a62;
+  --color-emergency-soft: #fcecee;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
