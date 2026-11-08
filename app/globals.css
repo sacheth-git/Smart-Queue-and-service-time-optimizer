@@ -17,6 +17,29 @@
   --color-emergency-soft: #fcecee;
 }
 
+/* A selected check-in card settles in with a small bounce. */
+.pq-select {
+  animation: pq-select 0.4s ease;
+}
+
+@keyframes pq-select {
+  0% {
+    transform: scale(0.98);
+  }
+  55% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pq-select {
+    animation: none;
+  }
+}
+
 /* A bright segment travels along the home page heartbeat line. */
 .pq-pulse-trace {
   stroke-dasharray: 150 900;

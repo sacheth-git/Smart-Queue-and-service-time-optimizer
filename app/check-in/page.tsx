@@ -12,9 +12,11 @@ export default function CheckInPage() {
   const list = getDb().select({ id: services.id, name: services.name }).from(services).all();
   return (
     <AppShell>
-      <div className="mb-5 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Get your token</h1>
-        <p className="text-muted-foreground">Join the queue in under a minute.</p>
+      <div className="mt-4 mb-6 text-center">
+        <h1 className="text-[clamp(1.9rem,4vw,2.5rem)] leading-tight font-bold tracking-[-0.03em] text-balance">
+          Get your token
+        </h1>
+        <p className="mt-2 text-[17px] text-navy-soft">Join the queue in under a minute.</p>
       </div>
       <CheckInForm
         services={list}
