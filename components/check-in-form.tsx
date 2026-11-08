@@ -45,61 +45,10 @@ const SERVICE_CARDS: Record<string, { icon: LucideIcon; description: string }> =
   pharmacy: { icon: Pill, description: "Collect the medicines on your prescription." },
 };
 
-const STEPS = ["Service", "Phone number", "Details"];
-
 const primaryButton =
   "inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-brand px-5 font-semibold text-white shadow-[0_10px_22px_-12px_rgb(21_158_154/0.9)] transition hover:bg-brand-strong active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none";
 const ghostButton =
   "inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-white px-5 font-semibold text-navy shadow-sm transition hover:border-slate-300 active:scale-[0.98]";
-
-function Stepper({ step }: { step: Step }) {
-  return (
-    <ol aria-label="Progress" className="mt-7 mb-5 grid grid-cols-3">
-      {STEPS.map((label, index) => {
-        const n = index + 1;
-        const complete = n < step;
-        const current = n === step;
-        return (
-          <li
-            key={label}
-            aria-current={current ? "step" : undefined}
-            className="relative flex min-w-0 flex-col items-center gap-2"
-          >
-            {index > 0 && (
-              <span aria-hidden="true" className="absolute top-[17px] right-1/2 h-[3px] w-full rounded-full bg-line">
-                <span
-                  className={cn(
-                    "block h-full rounded-full bg-brand transition-[width] duration-500",
-                    n <= step ? "w-full" : "w-0",
-                  )}
-                />
-              </span>
-            )}
-            <span
-              className={cn(
-                "relative z-10 flex size-9 items-center justify-center rounded-full border-2 text-[15px] font-bold transition-colors duration-300",
-                complete && "border-brand bg-brand text-white",
-                current && "border-brand bg-white text-brand shadow-[0_0_0_5px_rgb(21_158_154/0.14)]",
-                !complete && !current && "border-line bg-white text-slate-400",
-              )}
-            >
-              {complete ? <Check className="size-[18px] animate-in zoom-in-50 duration-300" strokeWidth={3} /> : n}
-            </span>
-            <span
-              className={cn(
-                "text-center text-xs font-semibold sm:text-[13px]",
-                complete || current ? "text-navy" : "text-slate-400",
-              )}
-            >
-              {label}
-              {complete && <span className="sr-only"> (done)</span>}
-            </span>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
 
 function StepHeading({ step, title, hint, optional }: { step: Step; title: string; hint: string; optional?: boolean }) {
   return (
@@ -227,9 +176,7 @@ export function CheckInForm({
         If this is an emergency, tell a staff member now. Do not wait for a token.
       </p>
 
-      <Stepper step={step} />
-
-      <div className="rounded-[20px] border border-line bg-white p-5 shadow-[0_1px_2px_rgb(16_42_67/0.05),0_8px_24px_-8px_rgb(16_42_67/0.14)] sm:p-7">
+      <div className="mt-5 rounded-[20px] border border-line bg-white p-5 shadow-[0_1px_2px_rgb(16_42_67/0.05),0_8px_24px_-8px_rgb(16_42_67/0.14)] sm:p-7">
         {step === 1 && (
           <div key="service" className="animate-in duration-300 fade-in slide-in-from-bottom-2">
             <StepHeading
