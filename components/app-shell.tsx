@@ -40,16 +40,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
       >
         <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2 md:flex-nowrap">
-          <Link href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tight">
-            <span className="relative flex size-9 items-center justify-center rounded-[11px] bg-brand text-white shadow-[0_6px_16px_-6px_rgb(21_158_154/0.7)]">
+          <Link href="/" className="flex items-center gap-2.5 text-lg font-semibold tracking-tight">
+            <span className="relative flex size-9 items-center justify-center rounded-lg bg-brand text-white">
               <Activity className="size-5" />
-              <span className="absolute -top-1 -right-1 flex size-3" aria-hidden="true">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
-                <span className="relative inline-flex size-3 rounded-full border-2 border-white bg-emerald-400" />
-              </span>
+              <span
+                aria-hidden="true"
+                className="absolute -top-1 -right-1 size-3 rounded-full border-2 border-white bg-emerald-400"
+              />
             </span>
             <span>
-              PulseQueue <span className="text-brand">AI</span>
+              PulseQueue <span className="font-normal text-navy-soft">AI</span>
             </span>
           </Link>
           <nav
@@ -64,10 +64,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   href={href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors max-sm:px-3 max-sm:text-sm",
-                    active
-                      ? "bg-mint font-semibold text-brand-strong md:after:absolute md:after:-bottom-[11px] md:after:left-1/2 md:after:h-[3px] md:after:w-6 md:after:-translate-x-1/2 md:after:rounded-full md:after:bg-brand"
-                      : "text-navy-soft hover:bg-slate-100 hover:text-navy",
+                    "relative flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium transition-colors",
+                    active ? "bg-mint text-brand-strong" : "text-navy-soft hover:bg-slate-100 hover:text-navy",
                   )}
                 >
                   <Icon className="size-4 max-sm:hidden" />
@@ -76,9 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               );
             })}
           </nav>
-          <span className="ml-auto hidden rounded-full border border-line bg-white px-2.5 py-1 text-xs font-semibold tracking-wide text-navy-soft uppercase sm:inline-flex">
-            Demo mode · synthetic data
-          </span>
+          <span className="ml-auto hidden text-sm text-navy-soft sm:inline">Demo mode, synthetic data</span>
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">{children}</main>

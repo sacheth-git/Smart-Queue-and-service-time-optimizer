@@ -7,7 +7,7 @@ export function PulseLine() {
   return (
     <div
       aria-hidden="true"
-      className="relative mt-6 h-24 max-w-[34em] overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-white to-mint shadow-sm"
+      className="relative mt-8 h-24 max-w-[34rem] overflow-hidden rounded-xl border border-line bg-gradient-to-b from-white to-mint"
     >
       <svg viewBox="0 0 560 90" preserveAspectRatio="none" className="absolute inset-x-0 top-1.5 h-[calc(100%-12px)] w-full">
         <defs>
@@ -20,18 +20,11 @@ export function PulseLine() {
           <mask id="pq-pulse-edges">
             <rect width="560" height="90" fill="url(#pq-pulse-fade)" />
           </mask>
-          <filter id="pq-pulse-glow" x="-20%" y="-50%" width="140%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
         </defs>
         <g mask="url(#pq-pulse-edges)" fill="none" strokeLinejoin="round">
           <path d="M0 45 H560" className="stroke-line" strokeWidth={1} strokeDasharray="2 6" vectorEffect="non-scaling-stroke" />
           <path d={HEARTBEAT} stroke="rgb(21 158 154 / 0.22)" strokeWidth={2} vectorEffect="non-scaling-stroke" />
-          <path d={HEARTBEAT} className="pq-pulse-trace stroke-brand" strokeWidth={3} strokeLinecap="round" filter="url(#pq-pulse-glow)" />
+          <path d={HEARTBEAT} className="pq-pulse-trace stroke-brand" strokeWidth={2.5} strokeLinecap="round" />
         </g>
       </svg>
     </div>
